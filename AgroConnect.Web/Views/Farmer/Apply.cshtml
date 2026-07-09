@@ -1,0 +1,88 @@
+@model AgroConnect.Web.ViewModels.FarmerApplicationViewModel
+@{
+    ViewData["Title"] = "Fermerlik Müraciəti";
+}
+
+<div class="row justify-content-center mt-4">
+    <div class="col-md-8">
+        <div class="card shadow-lg">
+            <div class="card-header bg-success text-white text-center py-3">
+                <h3 class="mb-0">Fermer Olmaq Üçün Müraciət</h3>
+            </div>
+            <div class="card-body p-4">
+                <p class="text-muted text-center mb-4">
+                    AgroConnect platformasında məhsullarınızı satmaq və fermer icmasına qoşulmaq üçün 
+                    aşağıdakı məlumatları dəqiq doldurmağınız xahiş olunur.
+                </p>
+
+                <form asp-action="Apply" method="post" enctype="multipart/form-data">
+                    <div asp-validation-summary="ModelOnly" class="text-danger mb-3"></div>
+
+                    <div class="row mb-3">
+                        <div class="col-md-6">
+                            <label asp-for="District" class="form-label fw-bold"></label>
+                            <input asp-for="District" class="form-control" placeholder="Məsələn: Quba" />
+                            <span asp-validation-for="District" class="text-danger"></span>
+                        </div>
+                        <div class="col-md-6">
+                            <label asp-for="Village" class="form-label fw-bold"></label>
+                            <input asp-for="Village" class="form-control" placeholder="Məsələn: Zərdabi kəndi" />
+                            <span asp-validation-for="Village" class="text-danger"></span>
+                        </div>
+                    </div>
+
+                    <div class="row mb-3">
+                        <div class="col-md-6">
+                            <label asp-for="FarmType" class="form-label fw-bold"></label>
+                            <select asp-for="FarmType" class="form-select">
+                                <option value="">Seçin...</option>
+                                <option value="Arıçılıq">Arıçılıq</option>
+                                <option value="Maldarlıq">Maldarlıq</option>
+                                <option value="Meyvəçilik">Meyvəçilik</option>
+                                <option value="Tərəvəzçilik">Tərəvəzçilik</option>
+                                <option value="Quşçuluq">Quşçuluq</option>
+                                <option value="Əkinçilik">Əkinçilik</option>
+                                <option value="Digər">Digər</option>
+                            </select>
+                            <span asp-validation-for="FarmType" class="text-danger"></span>
+                        </div>
+                        <div class="col-md-6">
+                            <label asp-for="ExperienceYears" class="form-label fw-bold"></label>
+                            <input asp-for="ExperienceYears" class="form-control" type="number" min="0" />
+                            <span asp-validation-for="ExperienceYears" class="text-danger"></span>
+                        </div>
+                    </div>
+
+                    <div class="mb-4">
+                        <label asp-for="About" class="form-label fw-bold"></label>
+                        <textarea asp-for="About" class="form-control" rows="4" placeholder="Özünüz və fermerlik fəaliyyətiniz haqqında məlumat yazın..."></textarea>
+                        <span asp-validation-for="About" class="text-danger"></span>
+                    </div>
+
+                    <div class="row mb-4">
+                        <div class="col-md-6">
+                            <label asp-for="IDCardImage" class="form-label fw-bold"></label>
+                            <input asp-for="IDCardImage" class="form-control" type="file" accept="image/*" />
+                            <span asp-validation-for="IDCardImage" class="text-danger"></span>
+                        </div>
+                        <div class="col-md-6">
+                            <label asp-for="FarmImage" class="form-label fw-bold"></label>
+                            <input asp-for="FarmImage" class="form-control" type="file" accept="image/*" />
+                            <span asp-validation-for="FarmImage" class="text-danger"></span>
+                        </div>
+                    </div>
+
+                    <div class="d-grid mt-4">
+                        <button type="submit" class="btn btn-success btn-lg">
+                            <i class="bi bi-send-fill"></i> Müraciəti Göndər
+                        </button>
+                    </div>
+                </form>
+            </div>
+        </div>
+    </div>
+</div>
+
+@section Scripts {
+    <partial name="_ValidationScriptsPartial" />
+}

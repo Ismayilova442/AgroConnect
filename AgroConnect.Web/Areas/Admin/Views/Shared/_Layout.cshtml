@@ -1,0 +1,47 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="utf-8" />
+    <meta name="viewport" content="width=device-width, initial-scale=1.0" />
+    <title>@ViewData["Title"] - Admin Panel</title>
+    <link rel="stylesheet" href="~/lib/bootstrap/dist/css/bootstrap.min.css" />
+    <link rel="stylesheet" href="https://cdn.jsdelivr.net/npm/bootstrap-icons@1.11.1/font/bootstrap-icons.css">
+</head>
+<body>
+    <div class="d-flex">
+        <!-- Sidebar -->
+        <div class="bg-dark text-white p-3 vh-100" style="width: 250px;">
+            <h4 class="text-center">Admin Panel</h4>
+            <hr />
+            <ul class="nav flex-column">
+                <li class="nav-item mb-2">
+                    <a href="/Admin/Dashboard" class="nav-link text-white">
+                        <i class="bi bi-speedometer2 me-2"></i> Dashboard
+                    </a>
+                </li>
+                <li class="nav-item mb-2">
+                    <a href="/" class="nav-link text-white">
+                        <i class="bi bi-house-door me-2"></i> Sayta Qayıt
+                    </a>
+                </li>
+            </ul>
+        </div>
+        
+        <!-- Content -->
+        <div class="flex-grow-1 bg-light">
+            <nav class="navbar navbar-expand-lg navbar-light bg-white border-bottom p-3">
+                <div class="container-fluid">
+                    <span class="navbar-brand">İdarəetmə Paneli</span>
+                </div>
+            </nav>
+            <div class="p-4">
+                @RenderBody()
+            </div>
+        </div>
+    </div>
+
+    <script src="~/lib/jquery/dist/jquery.min.js"></script>
+    <script src="~/lib/bootstrap/dist/js/bootstrap.bundle.min.js"></script>
+    @await RenderSectionAsync("Scripts", required: false)
+</body>
+</html>

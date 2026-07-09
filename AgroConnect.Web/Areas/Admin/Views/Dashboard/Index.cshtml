@@ -1,0 +1,62 @@
+@using AgroConnect.Domain.Entities
+@model IEnumerable<FarmerProfile>
+@{
+    ViewData["Title"] = "Dashboard";
+}
+
+<h2 class="mb-4">Gözləmədə olan Fermer Müraciətləri</h2>
+
+@if (!Model.Any())
+{
+    <div class="alert alert-success">Hal-hazırda gözləmədə olan müraciət yoxdur.</div>
+}
+else
+{
+    <div class="table-responsive bg-white shadow-sm rounded p-3">
+        <table class="table table-hover align-middle">
+            <thead class="table-dark">
+                <tr>
+                    <th>Fermer</th>
+                    <th>Email</th>
+                    <th>Rayon / Kənd</th>
+                    <th>Fəaliyyət növü</th>
+                    <th>Təcrübə</th>
+                    <th>Vəsiqə & Təsərrüfat (Şəkil)</th>
+                    <th>Əməliyyatlar</th>
+                </tr>
+            </thead>
+            <tbody>
+                @foreach (var item in Model)
+                {
+                    <tr>
+                        <td>@item.ApplicationUser?.FirstName @item.ApplicationUser?.LastName</td>
+                        <td>@item.ApplicationUser?.Email</td>
+                        <td>@item.District / @item.Village</td>
+                        <td><span class="badge bg-primary">@item.FarmType</span></td>
+                        <td>@item.ExperienceYears il</td>
+                        <td>
+                            <a href="@item.IDCardImagePath" target="_blank" class="btn btn-sm btn-outline-info">Vəsiqə</a>
+                            <a href="@item.FarmImagePath" target="_blank" class="btn btn-sm btn-outline-info">Firma/Təsərrüfat</a>
+                        </td>
+                        <td>
+                            <div class="d-flex gap-2">
+                                <form asp-action="Approve" method="post">
+                                    <input type="hidden" name="id" value="@item.Id" />
+                                    <button type="submit" class="btn btn-success btn-sm" onclick="return confirm('Təsdiqləmək istədiyinizə əminsiniz?');">
+                                        <i class="bi bi-check-circle"></i> Təsdiqlə
+                                    </button>
+                                </form>
+                                <form asp-action="Reject" method="post">
+                                    <input type="hidden" name="id" value="@item.Id" />
+                                    <button type="submit" class="btn btn-danger btn-sm" onclick="return confirm('Rədd etmək istədiyinizə əminsiniz?');">
+                                        <i class="bi bi-x-circle"></i> Rədd et
+                                    </button>
+                                </form>
+                            </div>
+                        </td>
+                    </tr>
+                }
+            </tbody>
+        </table>
+    </div>
+}

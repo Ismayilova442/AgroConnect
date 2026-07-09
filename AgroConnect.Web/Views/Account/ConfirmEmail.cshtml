@@ -1,0 +1,11 @@
+@{
+    ViewData["Title"] = "Email Təsdiqi";
+}
+
+<div class="container mt-5 text-center">
+    <div class="alert alert-info d-inline-block p-4 shadow">
+        <h3>@ViewData["Title"]</h3>
+        <p class="lead mt-3">@ViewBag.Message</p>
+        <a asp-controller="Account" asp-action="Login" class="btn btn-primary mt-3">Giriş Səhifəsinə Keç</a>
+    </div>
+</div>

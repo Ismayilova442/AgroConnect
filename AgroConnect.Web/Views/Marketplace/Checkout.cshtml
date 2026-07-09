@@ -1,0 +1,40 @@
+@model AgroConnect.Domain.Entities.Order
+@{
+    ViewData["Title"] = "Sifarişi Rəsmiləşdir";
+}
+
+<div class="row justify-content-center mt-4">
+    <div class="col-md-6">
+        <div class="card shadow">
+            <div class="card-header bg-success text-white">
+                <h4 class="mb-0">Çatdırılma Məlumatları</h4>
+            </div>
+            <div class="card-body p-4">
+                <form asp-action="Checkout" method="post">
+                    <div asp-validation-summary="ModelOnly" class="text-danger mb-3"></div>
+
+                    <div class="mb-3">
+                        <label asp-for="ShippingAddress" class="form-label fw-bold">Çatdırılma Ünvanı</label>
+                        <textarea asp-for="ShippingAddress" class="form-control" rows="3" required placeholder="Tam ünvanı daxil edin"></textarea>
+                        <span asp-validation-for="ShippingAddress" class="text-danger"></span>
+                    </div>
+
+                    <div class="mb-3">
+                        <label asp-for="ContactNumber" class="form-label fw-bold">Əlaqə Nömrəsi</label>
+                        <input asp-for="ContactNumber" class="form-control" required placeholder="Məs: +994551234567" />
+                        <span asp-validation-for="ContactNumber" class="text-danger"></span>
+                    </div>
+
+                    <div class="alert alert-info">
+                        <i class="bi bi-info-circle"></i> Ödəniş növü: <strong>Qapıda Ödəmə (Nəğd)</strong>. <br />
+                        Kuryer məhsulu çatdırdıqda ödəniş edəcəksiniz.
+                    </div>
+
+                    <div class="d-grid mt-4">
+                        <button type="submit" class="btn btn-success btn-lg">Sifarişi Təsdiqlə</button>
+                    </div>
+                </form>
+            </div>
+        </div>
+    </div>
+</div>

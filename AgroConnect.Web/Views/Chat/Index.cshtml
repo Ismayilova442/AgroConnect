@@ -1,0 +1,86 @@
+@model IEnumerable<AgroConnect.Domain.Entities.ChatMessage>
+@{
+    ViewData["Title"] = "Ümumi Çat";
+}
+
+<div class="row justify-content-center">
+    <div class="col-md-8">
+        <div class="card shadow">
+            <div class="card-header bg-success text-white d-flex justify-content-between align-items-center">
+                <h5 class="mb-0"><i class="bi bi-chat-dots-fill"></i> Fermerlər Söhbəti</h5>
+                <small><i class="bi bi-circle-fill text-warning"></i> Canlı</small>
+            </div>
+            <div class="card-body" style="height: 500px; overflow-y: scroll;" id="chatWindow">
+                <ul id="messagesList" class="list-unstyled">
+                    @foreach (var msg in Model)
+                    {
+                        <li class="mb-3">
+                            <div class="fw-bold text-primary">@msg.ApplicationUser?.FirstName @msg.ApplicationUser?.LastName</div>
+                            <div class="bg-light p-2 rounded d-inline-block shadow-sm">@msg.Content</div>
+                            <div class="text-muted small"><i class="bi bi-clock"></i> @msg.SentAt.ToString("HH:mm")</div>
+                        </li>
+                    }
+                </ul>
+            </div>
+            <div class="card-footer bg-white">
+                <div class="input-group">
+                    <input type="text" id="messageInput" class="form-control" placeholder="Mesajınızı yazın..." />
+                    <button class="btn btn-success" id="sendButton"><i class="bi bi-send"></i> Göndər</button>
+                </div>
+            </div>
+        </div>
+    </div>
+</div>
+
+@section Scripts {
+    <script src="https://cdnjs.cloudflare.com/ajax/libs/microsoft-signalr/7.0.10/signalr.min.js"></script>
+    <script>
+        var userName = '@ViewBag.UserName';
+        
+        var connection = new signalR.HubConnectionBuilder().withUrl("/chatHub").build();
+
+        // Scroll to bottom on load
+        var chatWindow = document.getElementById("chatWindow");
+        chatWindow.scrollTop = chatWindow.scrollHeight;
+
+        document.getElementById("sendButton").disabled = true;
+
+        connection.on("ReceiveMessage", function (user, message, time) {
+            var li = document.createElement("li");
+            li.className = "mb-3";
+            li.innerHTML = `
+                <div class="fw-bold text-primary">${user}</div>
+                <div class="bg-light p-2 rounded d-inline-block shadow-sm">${message}</div>
+                <div class="text-muted small"><i class="bi bi-clock"></i> ${time}</div>
+            `;
+            document.getElementById("messagesList").appendChild(li);
+            
+            // Auto scroll to bottom
+            chatWindow.scrollTop = chatWindow.scrollHeight;
+        });
+
+        connection.start().then(function () {
+            document.getElementById("sendButton").disabled = false;
+        }).catch(function (err) {
+            return console.error(err.toString());
+        });
+
+        document.getElementById("sendButton").addEventListener("click", function (event) {
+            var message = document.getElementById("messageInput").value;
+            if(message.trim() !== "") {
+                connection.invoke("SendMessage", userName, message).catch(function (err) {
+                    return console.error(err.toString());
+                });
+                document.getElementById("messageInput").value = "";
+            }
+            event.preventDefault();
+        });
+
+        // Enter key to send
+        document.getElementById("messageInput").addEventListener("keypress", function (e) {
+            if (e.key === 'Enter') {
+                document.getElementById("sendButton").click();
+            }
+        });
+    </script>
+}

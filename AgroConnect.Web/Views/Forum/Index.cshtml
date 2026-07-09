@@ -1,0 +1,45 @@
+@model IEnumerable<AgroConnect.Domain.Entities.ForumTopic>
+@{
+    ViewData["Title"] = "Forum (Sual-Cavab)";
+}
+
+<div class="d-flex justify-content-between align-items-center mb-4">
+    <h2><i class="bi bi-chat-square-text text-primary"></i> Forum</h2>
+    @if (User.Identity!.IsAuthenticated)
+    {
+        <a asp-action="Create" class="btn btn-primary"><i class="bi bi-plus-circle"></i> Yeni Sual Ver</a>
+    }
+    else
+    {
+        <a asp-area="Identity" asp-controller="Account" asp-action="Login" class="btn btn-outline-primary">Sual vermək üçün daxil olun</a>
+    }
+</div>
+
+@if (!Model.Any())
+{
+    <div class="alert alert-info">Hələ heç bir mövzu yoxdur. İlk sualı siz verin!</div>
+}
+else
+{
+    <div class="list-group shadow-sm">
+        @foreach (var topic in Model)
+        {
+            <a asp-action="Details" asp-route-id="@topic.Id" class="list-group-item list-group-item-action p-4 border-start-0 border-end-0">
+                <div class="d-flex w-100 justify-content-between align-items-center">
+                    <h5 class="mb-1 text-primary fw-bold">@topic.Title</h5>
+                    <small class="text-muted"><i class="bi bi-clock"></i> @topic.CreatedAt.ToString("dd.MM.yyyy HH:mm")</small>
+                </div>
+                <p class="mb-1 text-muted text-truncate" style="max-width: 800px;">@topic.Content</p>
+                <div class="d-flex gap-3 mt-3">
+                    <small class="text-secondary"><i class="bi bi-person"></i> @topic.ApplicationUser?.FirstName @topic.ApplicationUser?.LastName</small>
+                    <small class="text-secondary"><i class="bi bi-chat-dots"></i> @topic.Replies.Count cavab</small>
+                    <small class="text-secondary"><i class="bi bi-eye"></i> @topic.ViewsCount baxış</small>
+                    @if (topic.Replies.Any(r => r.IsBestAnswer))
+                    {
+                        <small class="text-success fw-bold"><i class="bi bi-check-circle-fill"></i> Həll edildi</small>
+                    }
+                </div>
+            </a>
+        }
+    </div>
+}

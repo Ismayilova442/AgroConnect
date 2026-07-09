@@ -1,0 +1,13 @@
+@{
+    ViewData["Title"] = "Qeydiyyat Uğurludur";
+}
+
+<div class="container mt-5 text-center">
+    <div class="alert alert-success d-inline-block p-4 shadow">
+        <h3><i class="bi bi-check-circle-fill"></i> @ViewData["Title"]</h3>
+        <p class="lead mt-3">@ViewBag.Message</p>
+        <hr />
+        <p>Emailinizə göndərilən linkə daxil olaraq hesabınızı aktivləşdirin.</p>
+        <a asp-controller="Home" asp-action="Index" class="btn btn-outline-success mt-3">Ana Səhifəyə Qayıt</a>
+    </div>
+</div>
