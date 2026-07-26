@@ -1,0 +1,89 @@
+﻿@model IEnumerable<AgroConnect.Domain.Entities.Order>
+@using AgroConnect.Domain.Entities
+@{
+    ViewData["Title"] = "Sifarişlər";
+    var selectedStatus = ViewBag.SelectedStatus as OrderStatus?;
+}
+
+<div class="d-flex justify-content-between align-items-center mb-4">
+    <h2>Sifarişlər</h2>
+    <div class="d-flex gap-2">
+        <a asp-area="Admin" asp-controller="Order" asp-action="ExportExcel" asp-route-status="@selectedStatus" class="btn btn-outline-success">
+            <i class="bi bi-file-earmark-excel"></i> Excel
+        </a>
+        <a asp-area="Admin" asp-controller="Order" asp-action="ExportPdf" asp-route-status="@selectedStatus" class="btn btn-outline-danger">
+            <i class="bi bi-file-earmark-pdf"></i> PDF
+        </a>
+    </div>
+</div>
+
+<!-- STATUS FİLTRİ -->
+<ul class="nav nav-pills mb-4">
+    <li class="nav-item">
+        <a asp-area="Admin" asp-controller="Order" asp-action="Index" class="nav-link @(selectedStatus == null ? "active" : "")">Hamısı</a>
+    </li>
+    @foreach (var s in Enum.GetValues<OrderStatus>())
+    {
+        <li class="nav-item">
+            <a asp-area="Admin" asp-controller="Order" asp-action="Index" asp-route-status="@s" class="nav-link @(selectedStatus == s ? "active" : "")">@s</a>
+        </li>
+    }
+</ul>
+
+<div class="card shadow-sm p-3">
+    <div class="table-responsive">
+        <table class="table table-bordered table-hover align-middle">
+            <thead class="table-dark">
+                <tr>
+                    <th>#</th>
+                    <th>Müştəri</th>
+                    <th>Tarix</th>
+                    <th>Məhsul sayı</th>
+                    <th>Ümumi Məbləğ</th>
+                    <th>Status</th>
+                    <th></th>
+                </tr>
+            </thead>
+            <tbody>
+                @if (Model.Any())
+                {
+                    @foreach (var o in Model)
+                    {
+                        <tr>
+                            <td>#@o.Id</td>
+                            <td>@(o.ApplicationUser?.Email ?? "—")</td>
+                            <td>@o.OrderDate.ToString("dd.MM.yyyy HH:mm")</td>
+                            <td>@o.OrderItems.Count</td>
+                            <td>@o.TotalAmount.ToString("0.00") AZN</td>
+                            <td>
+                                @{
+                                    var badgeClass = o.Status switch
+                                    {
+                                        OrderStatus.Pending => "bg-warning",
+                                        OrderStatus.Processing => "bg-info",
+                                        OrderStatus.Shipped => "bg-primary",
+                                        OrderStatus.Delivered => "bg-success",
+                                        OrderStatus.Cancelled => "bg-danger",
+                                        _ => "bg-secondary"
+                                    };
+                                }
+                                <span class="badge @badgeClass">@o.Status</span>
+                            </td>
+                            <td>
+                                <a asp-area="Admin" asp-controller="Order" asp-action="Details" asp-route-id="@o.Id" class="btn btn-sm btn-outline-primary">
+                                    <i class="bi bi-eye"></i> Bax
+                                </a>
+                            </td>
+                        </tr>
+                    }
+                }
+                else
+                {
+                    <tr>
+                        <td colspan="7" class="text-center text-muted py-3">Sifariş yoxdur.</td>
+                    </tr>
+                }
+            </tbody>
+        </table>
+    </div>
+</div>

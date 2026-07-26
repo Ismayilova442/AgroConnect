@@ -1,0 +1,36 @@
+﻿@model AgroConnect.Web.Areas.Admin.Controllers.CreateAdminViewModel
+@{
+    ViewData["Title"] = "Yeni Admin";
+}
+
+<div class="card shadow-sm p-4" style="max-width: 500px; margin: auto;">
+    <h2>Yeni Admin Əlavə Et</h2>
+    <hr />
+
+    @if (!ViewData.ModelState.IsValid)
+    {
+        <div class="alert alert-danger">
+            <ul class="mb-0">
+                @foreach (var error in ViewData.ModelState.Values.SelectMany(v => v.Errors))
+                {
+                    <li>@error.ErrorMessage</li>
+                }
+            </ul>
+        </div>
+    }
+
+    <form asp-area="Admin" asp-controller="Admin" asp-action="Create" method="post">
+        <div class="mb-3">
+            <label class="form-label">Email</label>
+            <input asp-for="Email" class="form-control" required />
+            <span asp-validation-for="Email" class="text-danger"></span>
+        </div>
+        <div class="mb-3">
+            <label class="form-label">Şifrə</label>
+            <input asp-for="Password" type="password" class="form-control" required />
+            <span asp-validation-for="Password" class="text-danger"></span>
+        </div>
+        <button type="submit" class="btn btn-success w-100">Admin Yarat</button>
+        <a asp-area="Admin" asp-controller="Admin" asp-action="Index" class="btn btn-secondary w-100 mt-2">Geri qayıt</a>
+    </form>
+</div>

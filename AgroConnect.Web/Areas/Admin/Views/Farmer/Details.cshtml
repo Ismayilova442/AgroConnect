@@ -1,0 +1,82 @@
+﻿@model AgroConnect.Domain.Entities.FarmerProfile
+@{
+    ViewData["Title"] = "Fermer Detalları";
+    var products = ViewBag.Products as List<AgroConnect.Domain.Entities.Product>;
+}
+
+<div class="d-flex justify-content-between align-items-center mb-4">
+    <h2>Fermer: @(Model.ApplicationUser?.UserName ?? "Ad daxil edilməyib")</h2>
+    <a asp-area="Admin" asp-controller="Farmer" asp-action="Index" class="btn btn-secondary">
+        <i class="bi bi-arrow-left"></i> Geri
+    </a>
+</div>
+
+<div class="row g-3">
+    <div class="col-md-5">
+        <div class="card shadow-sm p-3">
+            <h5>Fermer məlumatları</h5>
+            <hr />
+            <p><strong>Email:</strong> @Model.ApplicationUser?.Email</p>
+            <p><strong>Rayon:</strong> @Model.District</p>
+            <p><strong>Kənd:</strong> @Model.Village</p>
+            <p><strong>Fəaliyyət növü:</strong> @Model.FarmType</p>
+            <p><strong>Təcrübə:</strong> @Model.ExperienceYears il</p>
+            <p><strong>Haqqında:</strong> @Model.About</p>
+
+            @if (!string.IsNullOrEmpty(Model.IDCardImagePath))
+            {
+                <p><strong>Şəxsiyyət vəsiqəsi:</strong></p>
+                <img src="@Model.IDCardImagePath" style="max-width:100%;border-radius:8px;" class="mb-2" />
+            }
+            @if (!string.IsNullOrEmpty(Model.FarmImagePath))
+            {
+                <p><strong>Təsərrüfat şəkli:</strong></p>
+                <img src="@Model.FarmImagePath" style="max-width:100%;border-radius:8px;" />
+            }
+        </div>
+    </div>
+
+    <div class="col-md-7">
+        <div class="card shadow-sm p-3">
+            <h5>Məhsulları (@(products?.Count ?? 0))</h5>
+            <hr />
+            <table class="table table-bordered align-middle">
+                <thead class="table-dark">
+                    <tr>
+                        <th>Şəkil</th>
+                        <th>Ad</th>
+                        <th>Kateqoriya</th>
+                        <th>Qiymət</th>
+                        <th>Stok</th>
+                    </tr>
+                </thead>
+                <tbody>
+                    @if (products != null && products.Any())
+                    {
+                        @foreach (var p in products)
+                        {
+                            <tr>
+                                <td>
+                                    @if (!string.IsNullOrEmpty(p.ImageUrl))
+                                    {
+                                        <img src="@p.ImageUrl" style="width:40px;height:40px;object-fit:cover;border-radius:6px;" />
+                                    }
+                                </td>
+                                <td>@p.Title</td>
+                                <td>@(p.Category?.Name ?? "—")</td>
+                                <td>@p.Price AZN</td>
+                                <td>@p.StockQuantity</td>
+                            </tr>
+                        }
+                    }
+                    else
+                    {
+                        <tr>
+                            <td colspan="5" class="text-center text-muted py-3">Bu fermerin məhsulu yoxdur.</td>
+                        </tr>
+                    }
+                </tbody>
+            </table>
+        </div>
+    </div>
+</div>

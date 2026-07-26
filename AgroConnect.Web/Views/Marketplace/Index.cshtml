@@ -3,6 +3,14 @@
     ViewData["Title"] = "Marketplace";
 }
 
+@if (TempData["Error"] != null)
+{
+    <div class="alert alert-warning alert-dismissible fade show" role="alert">
+        <i class="bi bi-exclamation-triangle me-1"></i> @TempData["Error"]
+        <button type="button" class="btn-close" data-bs-dismiss="alert"></button>
+    </div>
+}
+
 <div class="row mb-4">
     <div class="col-12">
         <div class="bg-success text-white p-5 rounded text-center shadow">
@@ -11,7 +19,6 @@
         </div>
     </div>
 </div>
-
 <div class="row">
     <!-- Filters Sidebar -->
     <div class="col-md-3 mb-4">
@@ -32,7 +39,6 @@
             </ul>
         </div>
     </div>
-
     <!-- Product Grid -->
     <div class="col-md-9">
         <div class="row row-cols-1 row-cols-md-3 g-4">
@@ -47,12 +53,24 @@
                         <div class="card-body">
                             <h5 class="card-title">@item.Title</h5>
                             <p class="card-text text-muted text-truncate">@item.Description</p>
-                            <h4 class="text-success fw-bold">@item.Price AZN</h4>
-                            
+
+                            <h4 class="text-success fw-bold live-price"
+                                id="price-@item.Id"
+                                data-unit-price="@item.Price.ToString(System.Globalization.CultureInfo.InvariantCulture)">
+                                @item.Price.ToString("0.00") AZN
+                            </h4>
+
                             <form asp-action="AddToCart" method="post" class="mt-3">
                                 <input type="hidden" name="productId" value="@item.Id" />
                                 <div class="input-group">
-                                    <input type="number" name="quantity" class="form-control" value="1" min="1" max="@item.StockQuantity" />
+                                    <input type="number"
+                                           name="quantity"
+                                           class="form-control quantity-input"
+                                           data-product-id="@item.Id"
+                                           value="1"
+                                           min="1"
+                                           max="@item.StockQuantity"
+                                           oninput="updateLivePrice(this)" />
                                     <button class="btn btn-outline-success" type="submit"><i class="bi bi-cart-plus"></i> Səbətə At</button>
                                 </div>
                             </form>
@@ -67,3 +85,21 @@
         </div>
     </div>
 </div>
+
+<script>
+    function updateLivePrice(input) {
+        var productId = input.getAttribute('data-product-id');
+        var priceEl = document.getElementById('price-' + productId);
+        if (!priceEl) return;
+
+        var unitPrice = parseFloat(priceEl.getAttribute('data-unit-price'));
+        var quantity = parseInt(input.value, 10);
+
+        if (isNaN(quantity) || quantity < 1) {
+            quantity = 1;
+        }
+
+        var total = (unitPrice * quantity).toFixed(2);
+        priceEl.textContent = total + ' AZN';
+    }
+</script>

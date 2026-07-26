@@ -1,0 +1,132 @@
+﻿@model IEnumerable<AgroConnect.Domain.Entities.FarmerProfile>
+@using AgroConnect.Domain.Entities
+
+@{
+    ViewData["Title"] = "Müraciətlər";
+
+    var pendingList = Model.Where(m => m.Status == ApplicationStatus.Pending).ToList();
+    var processedList = Model.Where(m => m.Status == ApplicationStatus.Approved || m.Status == ApplicationStatus.Rejected).ToList();
+}
+
+<div class="d-flex justify-content-between align-items-center mb-4">
+    <h2>Fermer Müraciətlərinin İdarə Edilməsi</h2>
+</div>
+
+<!-- TAB MENYULARI -->
+<ul class="nav nav-tabs mb-4" id="myTab" role="tablist">
+    <li class="nav-item" role="presentation">
+        <button class="nav-link active" id="pending-tab" data-bs-toggle="tab" data-bs-target="#pending" type="button" role="tab" aria-controls="pending" aria-selected="true">
+            Gözləmədə olanlar <span class="badge bg-danger ms-1">@pendingList.Count</span>
+        </button>
+    </li>
+    <li class="nav-item" role="presentation">
+        <button class="nav-link" id="processed-tab" data-bs-toggle="tab" data-bs-target="#processed" type="button" role="tab" aria-controls="processed" aria-selected="false">
+            Təsdiqlənmiş / Rədd edilmiş <span class="badge bg-secondary ms-1">@processedList.Count</span>
+        </button>
+    </li>
+</ul>
+
+<!-- TAB KONTENTLƏRİ -->
+<div class="tab-content" id="myTabContent">
+
+    <!-- 1. GÖZLƏMƏDƏ OLANLAR TABI -->
+    <div class="tab-pane fade show active" id="pending" role="tabpanel" aria-labelledby="pending-tab">
+        <div class="table-responsive">
+            <table class="table table-bordered table-hover align-middle">
+                <thead class="table-dark">
+                    <tr>
+                        <th>Fermer</th>
+                        <th>Email</th>
+                        <th>Rayon / Kənd</th>
+                        <th>Fəaliyyət növü</th>
+                        <th>Əməliyyatlar</th>
+                    </tr>
+                </thead>
+                <tbody>
+                    @if (pendingList.Any())
+                    {
+                        @foreach (var item in pendingList)
+                        {
+                            <tr>
+                                <td>@(item.ApplicationUser?.UserName ?? "Ad daxil edilməyib")</td>
+                                <td>@item.ApplicationUser?.Email</td>
+                                <td>@item.District / @item.Village</td>
+                                <td>
+                                    <span class="badge bg-primary">@item.FarmType</span>
+                                </td>
+                                <td>
+                                    <form asp-area="Admin" asp-controller="Dashboard" asp-action="Approve" asp-route-id="@item.Id" method="post" class="d-inline">
+                                        <button type="submit" class="btn btn-success btn-sm">Təsdiqlə</button>
+                                    </form>
+                                    <form asp-area="Admin" asp-controller="Dashboard" asp-action="Reject" asp-route-id="@item.Id" method="post" class="d-inline">
+                                        <button type="submit" class="btn btn-danger btn-sm">Rədd et</button>
+                                    </form>
+                                </td>
+                            </tr>
+                        }
+                    }
+                    else
+                    {
+                        <tr>
+                            <td colspan="5" class="text-center text-muted py-3">Gözləmədə olan müraciət yoxdur.</td>
+                        </tr>
+                    }
+                </tbody>
+            </table>
+        </div>
+    </div>
+
+    <!-- 2. TƏSDİQLƏNMİŞ / RƏDD EDİLMİŞ TABI -->
+    <div class="tab-pane fade" id="processed" role="tabpanel" aria-labelledby="processed-tab">
+        <div class="table-responsive">
+            <table class="table table-bordered table-hover align-middle">
+                <thead class="table-dark">
+                    <tr>
+                        <th>Fermer</th>
+                        <th>Email</th>
+                        <th>Rayon / Kənd</th>
+                        <th>Fəaliyyət növü</th>
+                        <th>Status</th>
+                    </tr>
+                </thead>
+                <tbody>
+                    @if (processedList.Any())
+                    {
+                        @foreach (var item in processedList)
+                        {
+                            <tr>
+                                <td>@(item.ApplicationUser?.UserName ?? "Ad daxil edilməyib")</td>
+                                <td>@item.ApplicationUser?.Email</td>
+                                <td>@item.District / @item.Village</td>
+                                <td>
+                                    <span class="badge bg-secondary">@item.FarmType</span>
+                                </td>
+                                <td>
+                                    @if (item.Status == ApplicationStatus.Approved)
+                                    {
+                                        <span class="badge bg-success">
+                                            <i class="bi bi-check-circle me-1"></i>Təsdiq edilmişdir
+                                        </span>
+                                    }
+                                    else if (item.Status == ApplicationStatus.Rejected)
+                                    {
+                                        <span class="badge bg-danger">
+                                            <i class="bi bi-x-circle me-1"></i>Rədd edilmişdir
+                                        </span>
+                                    }
+                                </td>
+                            </tr>
+                        }
+                    }
+                    else
+                    {
+                        <tr>
+                            <td colspan="5" class="text-center text-muted py-3">Heç bir keçmiş müraciət tapılmadı.</td>
+                        </tr>
+                    }
+                </tbody>
+            </table>
+        </div>
+    </div>
+
+</div>

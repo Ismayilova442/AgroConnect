@@ -21,7 +21,7 @@ namespace AgroConnect.Infrastructure.Data
                 }
             }
 
-            string adminEmail = "admin@agroconnect.az";
+            string adminEmail = "ccemo4239@gmail.com";
             var adminUser = await userManager.FindByEmailAsync(adminEmail);
 
             if (adminUser == null)
@@ -30,8 +30,8 @@ namespace AgroConnect.Infrastructure.Data
                 {
                     UserName = adminEmail,
                     Email = adminEmail,
-                    FirstName = "Super",
-                    LastName = "Admin",
+                    FirstName = "Camala",
+                    LastName = "Ismayilova",
                     EmailConfirmed = true
                 };
 

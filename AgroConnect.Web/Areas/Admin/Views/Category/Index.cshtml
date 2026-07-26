@@ -1,0 +1,61 @@
+﻿@model IEnumerable<AgroConnect.Domain.Entities.Category>
+@{
+    ViewData["Title"] = "Kateqoriyalar";
+}
+
+<div class="row">
+    <div class="col-md-4">
+        <div class="card shadow-sm p-3 mb-4">
+            <h4>Yeni Kateqoriya</h4>
+            <hr />
+            <form asp-area="Admin" asp-controller="Category" asp-action="Create" method="post">
+                <div class="mb-3">
+                    <label class="form-label">Kateqoriya Adı</label>
+                    <input name="Name" class="form-control" required />
+                </div>
+                <div class="mb-3">
+                    <label class="form-label">İkon Klası (Bootstrap Icons)</label>
+                    <input name="IconClass" class="form-control" placeholder="Örnək: bi-apple" />
+                </div>
+                <button type="submit" class="btn btn-primary w-100">Əlavə et</button>
+            </form>
+        </div>
+    </div>
+
+    <div class="col-md-8">
+        <div class="card shadow-sm p-3">
+            <h4>Mövcud Kateqoriyalar</h4>
+            <table class="table table-striped align-middle">
+                <thead>
+                    <tr>
+                        <th>İkon</th>
+                        <th>Adı</th>
+                        <th>Məhsul sayı</th>
+                        <th>Əməliyyatlar</th>
+                    </tr>
+                </thead>
+                <tbody>
+                    @foreach (var cat in Model)
+                    {
+                        <tr>
+                            <td><i class="bi @cat.IconClass fs-4"></i></td>
+                            <td>@cat.Name</td>
+                            <td>@cat.Products.Count</td>
+                            <td>
+                                <a asp-area="Admin" asp-controller="Category" asp-action="Edit" asp-route-id="@cat.Id" class="btn btn-sm btn-outline-primary">
+                                    <i class="bi bi-pencil"></i> Redaktə
+                                </a>
+                                <form asp-area="Admin" asp-controller="Category" asp-action="Delete" asp-route-id="@cat.Id" method="post" class="d-inline"
+                                      data-confirm="Bu kateqoriyanı silmək istədiyinizə əminsiniz?" data-confirm-title="Kateqoriyanı sil">
+                                    <button type="submit" class="btn btn-sm btn-outline-danger">
+                                        <i class="bi bi-trash"></i> Sil
+                                    </button>
+                                </form>
+                            </td>
+                        </tr>
+                    }
+                </tbody>
+            </table>
+        </div>
+    </div>
+</div>

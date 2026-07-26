@@ -1,62 +1,177 @@
 @using AgroConnect.Domain.Entities
-@model IEnumerable<FarmerProfile>
+@model AgroConnect.Web.Areas.Admin.Models.DashboardViewModel
 @{
     ViewData["Title"] = "Dashboard";
 }
 
-<h2 class="mb-4">Gözləmədə olan Fermer Müraciətləri</h2>
+<h2 class="mb-4">Dashboard</h2>
 
-@if (!Model.Any())
-{
-    <div class="alert alert-success">Hal-hazırda gözləmədə olan müraciət yoxdur.</div>
-}
-else
-{
-    <div class="table-responsive bg-white shadow-sm rounded p-3">
-        <table class="table table-hover align-middle">
-            <thead class="table-dark">
-                <tr>
-                    <th>Fermer</th>
-                    <th>Email</th>
-                    <th>Rayon / Kənd</th>
-                    <th>Fəaliyyət növü</th>
-                    <th>Təcrübə</th>
-                    <th>Vəsiqə & Təsərrüfat (Şəkil)</th>
-                    <th>Əməliyyatlar</th>
-                </tr>
-            </thead>
-            <tbody>
-                @foreach (var item in Model)
-                {
-                    <tr>
-                        <td>@item.ApplicationUser?.FirstName @item.ApplicationUser?.LastName</td>
-                        <td>@item.ApplicationUser?.Email</td>
-                        <td>@item.District / @item.Village</td>
-                        <td><span class="badge bg-primary">@item.FarmType</span></td>
-                        <td>@item.ExperienceYears il</td>
-                        <td>
-                            <a href="@item.IDCardImagePath" target="_blank" class="btn btn-sm btn-outline-info">Vəsiqə</a>
-                            <a href="@item.FarmImagePath" target="_blank" class="btn btn-sm btn-outline-info">Firma/Təsərrüfat</a>
-                        </td>
-                        <td>
-                            <div class="d-flex gap-2">
-                                <form asp-action="Approve" method="post">
-                                    <input type="hidden" name="id" value="@item.Id" />
-                                    <button type="submit" class="btn btn-success btn-sm" onclick="return confirm('Təsdiqləmək istədiyinizə əminsiniz?');">
-                                        <i class="bi bi-check-circle"></i> Təsdiqlə
-                                    </button>
-                                </form>
-                                <form asp-action="Reject" method="post">
-                                    <input type="hidden" name="id" value="@item.Id" />
-                                    <button type="submit" class="btn btn-danger btn-sm" onclick="return confirm('Rədd etmək istədiyinizə əminsiniz?');">
-                                        <i class="bi bi-x-circle"></i> Rədd et
-                                    </button>
-                                </form>
-                            </div>
-                        </td>
-                    </tr>
-                }
-            </tbody>
-        </table>
+<!-- STATİSTİKA KARTLARI -->
+<div class="row g-3 mb-4">
+    <div class="col-md-3 col-sm-6">
+        <div class="card shadow-sm border-0 p-3">
+            <div class="d-flex justify-content-between align-items-center">
+                <div>
+                    <div class="text-muted small">Gözləyən müraciətlər</div>
+                    <div class="fs-3 fw-bold text-warning">@Model.PendingCount</div>
+                </div>
+                <i class="bi bi-hourglass-split fs-1 text-warning opacity-50"></i>
+            </div>
+        </div>
     </div>
-}
+
+    <div class="col-md-3 col-sm-6">
+        <div class="card shadow-sm border-0 p-3">
+            <div class="d-flex justify-content-between align-items-center">
+                <div>
+                    <div class="text-muted small">Təsdiqlənmiş fermerlər</div>
+                    <div class="fs-3 fw-bold text-success">@Model.ApprovedCount</div>
+                </div>
+                <i class="bi bi-check-circle fs-1 text-success opacity-50"></i>
+            </div>
+        </div>
+    </div>
+
+    <div class="col-md-3 col-sm-6">
+        <div class="card shadow-sm border-0 p-3">
+            <div class="d-flex justify-content-between align-items-center">
+                <div>
+                    <div class="text-muted small">Məhsullar</div>
+                    <div class="fs-3 fw-bold text-primary">@Model.ProductsCount</div>
+                </div>
+                <i class="bi bi-box-seam fs-1 text-primary opacity-50"></i>
+            </div>
+        </div>
+    </div>
+
+    <div class="col-md-3 col-sm-6">
+        <div class="card shadow-sm border-0 p-3">
+            <div class="d-flex justify-content-between align-items-center">
+                <div>
+                    <div class="text-muted small">İstifadəçilər</div>
+                    <div class="fs-3 fw-bold text-info">@Model.UsersCount</div>
+                </div>
+                <i class="bi bi-people fs-1 text-info opacity-50"></i>
+            </div>
+        </div>
+    </div>
+
+    <div class="col-md-3 col-sm-6">
+        <div class="card shadow-sm border-0 p-3">
+            <div class="d-flex justify-content-between align-items-center">
+                <div>
+                    <div class="text-muted small">Rədd edilmiş müraciətlər</div>
+                    <div class="fs-3 fw-bold text-danger">@Model.RejectedCount</div>
+                </div>
+                <i class="bi bi-x-circle fs-1 text-danger opacity-50"></i>
+            </div>
+        </div>
+    </div>
+
+    <div class="col-md-3 col-sm-6">
+        <a asp-area="Admin" asp-controller="Order" asp-action="Index" class="text-decoration-none">
+            <div class="card shadow-sm border-0 p-3">
+                <div class="d-flex justify-content-between align-items-center">
+                    <div>
+                        <div class="text-muted small">Sifarişlər</div>
+                        <div class="fs-3 fw-bold text-secondary">@Model.OrdersCount</div>
+                    </div>
+                    <i class="bi bi-cart3 fs-1 text-secondary opacity-50"></i>
+                </div>
+            </div>
+        </a>
+    </div>
+</div>
+
+<!-- ALT HİSSƏ: SON HƏRƏKƏTLƏR -->
+<div class="row g-3">
+
+    <!-- Son müraciətlər -->
+    <div class="col-md-6">
+        <div class="card shadow-sm border-0">
+            <div class="card-header bg-white fw-bold">Son müraciətlər</div>
+            <ul class="list-group list-group-flush">
+                @if (Model.RecentFarmerRequests.Any())
+                {
+                    @foreach (var item in Model.RecentFarmerRequests)
+                    {
+                        <li class="list-group-item d-flex justify-content-between align-items-center">
+                            <span>@(item.ApplicationUser?.Email ?? "Ad daxil edilməyib")</span>
+                            @if (item.Status == ApplicationStatus.Pending)
+                            {
+                                <span class="badge bg-warning">Gözləyir</span>
+                            }
+                            else if (item.Status == ApplicationStatus.Approved)
+                            {
+                                <span class="badge bg-success">Təsdiqlənib</span>
+                            }
+                            else
+                            {
+                                <span class="badge bg-danger">Rədd olunub</span>
+                            }
+                        </li>
+                    }
+                }
+                else
+                {
+                    <li class="list-group-item text-muted text-center">Müraciət yoxdur.</li>
+                }
+            </ul>
+            <div class="card-footer bg-white text-end">
+                @if (User.IsInRole("SuperAdmin"))
+                {
+                    <a asp-area="Admin" asp-controller="Dashboard" asp-action="FarmerRequests" class="small">Hamısına bax →</a>
+                }
+            </div>
+        </div>
+    </div>
+
+    <!-- Son məhsullar -->
+    <div class="col-md-6">
+        <div class="card shadow-sm border-0">
+            <div class="card-header bg-white fw-bold">Son məhsullar</div>
+            <ul class="list-group list-group-flush">
+                @if (Model.RecentProducts.Any())
+                {
+                    @foreach (var item in Model.RecentProducts)
+                    {
+                        <li class="list-group-item d-flex justify-content-between align-items-center">
+                            <span>@item.Title</span>
+                            <span class="text-muted small">@item.Price AZN</span>
+                        </li>
+                    }
+                }
+                else
+                {
+                    <li class="list-group-item text-muted text-center">Məhsul yoxdur.</li>
+                }
+            </ul>
+            <div class="card-footer bg-white text-end">
+                <a asp-area="Admin" asp-controller="Product" asp-action="Index" class="small">Hamısına bax →</a>
+            </div>
+        </div>
+    </div>
+
+    <!-- Son qeydiyyatlar -->
+    <div class="col-md-6">
+        <div class="card shadow-sm border-0">
+            <div class="card-header bg-white fw-bold">Son qeydiyyatlar</div>
+            <ul class="list-group list-group-flush">
+                @if (Model.RecentUsers.Any())
+                {
+                    @foreach (var u in Model.RecentUsers)
+                    {
+                        <li class="list-group-item">
+                            @(u.UserName ?? u.Email)
+                        </li>
+                    }
+                }
+                else
+                {
+                    <li class="list-group-item text-muted text-center">İstifadəçi yoxdur.</li>
+                }
+            </ul>
+        </div>
+    </div>
+
+</div>

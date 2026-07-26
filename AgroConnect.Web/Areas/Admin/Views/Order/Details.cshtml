@@ -1,0 +1,76 @@
+﻿@model AgroConnect.Domain.Entities.Order
+@using AgroConnect.Domain.Entities
+@{
+    ViewData["Title"] = $"Sifariş #{Model.Id}";
+}
+
+<div class="d-flex justify-content-between align-items-center mb-4">
+    <h2>Sifariş #@Model.Id</h2>
+    <a asp-area="Admin" asp-controller="Order" asp-action="Index" class="btn btn-secondary">
+        <i class="bi bi-arrow-left"></i> Geri
+    </a>
+</div>
+
+<div class="row g-3">
+    <div class="col-md-6">
+        <div class="card shadow-sm p-3">
+            <h5>Müştəri məlumatları</h5>
+            <hr />
+            <p><strong>Email:</strong> @(Model.ApplicationUser?.Email ?? "—")</p>
+            <p><strong>Ünvan:</strong> @Model.ShippingAddress</p>
+            <p><strong>Əlaqə nömrəsi:</strong> @Model.ContactNumber</p>
+            <p><strong>Ödəniş üsulu:</strong> @Model.PaymentMethod</p>
+            <p><strong>Tarix:</strong> @Model.OrderDate.ToString("dd.MM.yyyy HH:mm")</p>
+        </div>
+    </div>
+
+    <div class="col-md-6">
+        <div class="card shadow-sm p-3">
+            <h5>Status</h5>
+            <hr />
+            <form asp-area="Admin" asp-controller="Order" asp-action="UpdateStatus" asp-route-id="@Model.Id" method="post">
+                <select name="newStatus" class="form-select mb-3">
+                    @foreach (var s in Enum.GetValues<OrderStatus>())
+                    {
+                        <option value="@s" selected="@(s == Model.Status)">@s</option>
+                    }
+                </select>
+                <button type="submit" class="btn btn-primary w-100">Statusu Yenilə</button>
+            </form>
+        </div>
+    </div>
+
+    <div class="col-12">
+        <div class="card shadow-sm p-3">
+            <h5>Sifariş Detalları</h5>
+            <hr />
+            <table class="table table-bordered align-middle">
+                <thead class="table-dark">
+                    <tr>
+                        <th>Məhsul</th>
+                        <th>Say</th>
+                        <th>Vahid Qiymət</th>
+                        <th>Cəm</th>
+                    </tr>
+                </thead>
+                <tbody>
+                    @foreach (var item in Model.OrderItems)
+                    {
+                        <tr>
+                            <td>@(item.Product?.Title ?? "Silinmiş məhsul")</td>
+                            <td>@item.Quantity</td>
+                            <td>@item.UnitPrice.ToString("0.00") AZN</td>
+                            <td>@((item.Quantity * item.UnitPrice).ToString("0.00")) AZN</td>
+                        </tr>
+                    }
+                </tbody>
+                <tfoot>
+                    <tr>
+                        <td colspan="3" class="text-end fw-bold">Ümumi Məbləğ:</td>
+                        <td class="fw-bold">@Model.TotalAmount.ToString("0.00") AZN</td>
+                    </tr>
+                </tfoot>
+            </table>
+        </div>
+    </div>
+</div>

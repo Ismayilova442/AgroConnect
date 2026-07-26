@@ -1,0 +1,134 @@
+﻿/* AgroConnect Admin Panel - dizayn */
+
+:root {
+    --agro-dark: #1a1d21;
+    --agro-dark-2: #23272b;
+    --agro-accent: #2e7d32;
+    --agro-accent-light: #4caf50;
+    --agro-radius: 12px;
+}
+
+body {
+    background-color: #f4f6f8;
+    font-family: "Segoe UI", system-ui, -apple-system, sans-serif;
+}
+
+/* SIDEBAR */
+.admin-sidebar {
+    background: linear-gradient(180deg, var(--agro-dark) 0%, var(--agro-dark-2) 100%);
+    box-shadow: 2px 0 12px rgba(0, 0, 0, 0.15);
+}
+
+    .admin-sidebar h4 {
+        letter-spacing: 0.5px;
+        font-weight: 700;
+    }
+
+.sidebar-nav .nav-link {
+    display: flex;
+    align-items: center;
+    border-radius: 8px;
+    padding: 10px 12px;
+    margin-bottom: 2px;
+    transition: background-color 0.15s ease, padding-left 0.15s ease;
+    color: rgba(255, 255, 255, 0.85) !important;
+}
+
+    .sidebar-nav .nav-link:hover {
+        background-color: rgba(255, 255, 255, 0.08);
+        padding-left: 16px;
+    }
+
+    .sidebar-nav .nav-link.active-link {
+        background-color: var(--agro-accent);
+        color: #fff !important;
+        font-weight: 600;
+    }
+
+    .sidebar-nav .nav-link i {
+        width: 20px;
+        text-align: center;
+    }
+
+/* CARDS */
+.card {
+    border-radius: var(--agro-radius) !important;
+    transition: transform 0.15s ease, box-shadow 0.15s ease;
+}
+
+    .card.shadow-sm:hover {
+        transform: translateY(-2px);
+        box-shadow: 0 8px 20px rgba(0, 0, 0, 0.08) !important;
+    }
+
+.card-header {
+    border-radius: var(--agro-radius) var(--agro-radius) 0 0 !important;
+}
+
+/* STAT KARTLARI (Dashboard) */
+.card a.text-decoration-none .card {
+    cursor: pointer;
+}
+
+/* TABLES */
+.table thead.table-dark th {
+    background-color: var(--agro-dark);
+    border-color: var(--agro-dark);
+}
+
+.table-hover tbody tr:hover {
+    background-color: rgba(46, 125, 50, 0.06);
+}
+
+/* BADGES */
+.badge {
+    font-weight: 500;
+    padding: 0.4em 0.7em;
+    border-radius: 6px;
+}
+
+/* BUTTONS */
+.btn {
+    border-radius: 8px;
+    font-weight: 500;
+}
+
+.btn-success {
+    background-color: var(--agro-accent);
+    border-color: var(--agro-accent);
+}
+
+    .btn-success:hover {
+        background-color: #256628;
+        border-color: #256628;
+    }
+
+/* NAV TABS */
+.nav-tabs .nav-link {
+    border: none;
+    color: #6c757d;
+    font-weight: 500;
+}
+
+    .nav-tabs .nav-link.active {
+        color: var(--agro-accent);
+        border-bottom: 3px solid var(--agro-accent);
+        background: transparent;
+    }
+
+.nav-pills .nav-link.active {
+    background-color: var(--agro-accent);
+}
+
+/* RESPONSIVE */
+@media (max-width: 768px) {
+    .admin-sidebar {
+        position: static !important;
+        width: 100% !important;
+        height: auto !important;
+    }
+
+    .admin-content {
+        margin-left: 0 !important;
+    }
+}
