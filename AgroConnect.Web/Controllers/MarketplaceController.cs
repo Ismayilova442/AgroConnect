@@ -4,6 +4,7 @@ using AgroConnect.Web.Helpers;
 using AgroConnect.Web.ViewModels;
 using Microsoft.AspNetCore.Authorization;
 using Microsoft.AspNetCore.Identity;
+using Microsoft.AspNetCore.Identity.UI.Services;
 using Microsoft.AspNetCore.Mvc;
 using Microsoft.EntityFrameworkCore;
 
@@ -13,11 +14,13 @@ namespace AgroConnect.Web.Controllers
     {
         private readonly ApplicationDbContext _context;
         private readonly UserManager<ApplicationUser> _userManager;
+        private readonly IEmailSender _emailSender;
 
-        public MarketplaceController(ApplicationDbContext context, UserManager<ApplicationUser> userManager)
+        public MarketplaceController(ApplicationDbContext context, UserManager<ApplicationUser> userManager, IEmailSender emailSender)
         {
             _context = context;
             _userManager = userManager;
+            _emailSender = emailSender;
         }
 
         // Hər istifadəçinin (və ya qonağın) səbəti öz açarında saxlanılır ki,
@@ -173,6 +176,14 @@ namespace AgroConnect.Web.Controllers
                 Status = OrderStatus.Pending
             };
 
+            // Səbətdəki məhsulları (fermer məlumatı ilə birgə) bir dəfəyə çəkirik
+            var productIds = cart.Select(c => c.ProductId).Distinct().ToList();
+            var products = await _context.Products
+                .Include(p => p.FarmerProfile)
+                    .ThenInclude(f => f!.ApplicationUser)
+                .Where(p => productIds.Contains(p.Id))
+                .ToListAsync();
+
             foreach (var item in cart)
             {
                 newOrder.OrderItems.Add(new OrderItem
@@ -181,15 +192,68 @@ namespace AgroConnect.Web.Controllers
                     Quantity = item.Quantity,
                     UnitPrice = item.Price
                 });
+
+                // Stoku azaldırıq
+                var product = products.FirstOrDefault(p => p.Id == item.ProductId);
+                if (product != null)
+                {
+                    product.StockQuantity -= item.Quantity;
+                    if (product.StockQuantity < 0)
+                    {
+                        product.StockQuantity = 0;
+                    }
+                }
             }
 
             _context.Orders.Add(newOrder);
             await _context.SaveChangesAsync();
 
+            // Hər fermerə YALNIZ öz məhsulları üçün bildiriş email-i göndəririk
+            await NotifyFarmersAsync(cart, products, newOrder);
+
             HttpContext.Session.Remove(cartKey); // Clear cart
 
             ViewBag.Message = "Sifarişiniz uğurla tamamlandı! Təşəkkür edirik.";
             return View("OrderSuccess");
+        }
+
+        private async Task NotifyFarmersAsync(List<CartItem> cart, List<Product> products, Order order)
+        {
+            // Hər cart item-i özünə aid Product-a bağlayıb, fermerin email-inə görə qruplaşdırırıq
+            var itemsWithProduct = cart
+                .Select(item => new
+                {
+                    CartItem = item,
+                    Product = products.FirstOrDefault(p => p.Id == item.ProductId)
+                })
+                .Where(x => x.Product?.FarmerProfile?.ApplicationUser?.Email != null)
+                .ToList();
+
+            var farmerGroups = itemsWithProduct.GroupBy(x => x.Product!.FarmerProfile!.ApplicationUser!.Email);
+
+            foreach (var group in farmerGroups)
+            {
+                var farmerEmail = group.Key!;
+
+                var itemsListHtml = string.Join("", group.Select(x =>
+                    $"<li>{x.CartItem.Title} — {x.CartItem.Quantity} ədəd × {x.CartItem.Price} AZN</li>"));
+
+                var subject = "AgroConnect - Yeni Sifarişiniz Var!";
+                var body = $@"
+                    <div style='font-family:Segoe UI,Arial,sans-serif;max-width:500px;margin:auto;'>
+                        <h2 style='color:#2e7d32;'>Yeni Sifariş Bildirişi</h2>
+                        <p>Aşağıdakı məhsullarınız üçün yeni sifariş verildi:</p>
+                        <ul>{itemsListHtml}</ul>
+                        <hr/>
+                        <p><strong>Çatdırılma ünvanı:</strong> {order.ShippingAddress}</p>
+                        <p><strong>Əlaqə nömrəsi:</strong> {order.ContactNumber}</p>
+                        <p><strong>Ödəniş növü:</strong> {order.PaymentMethod}</p>
+                        <br/>
+                        <p style='color:#888;font-size:13px;'>Bu, avtomatik göndərilən mesajdır, cavablamayın.</p>
+                    </div>";
+
+                await _emailSender.SendEmailAsync(farmerEmail, subject, body);
+            }
         }
     }
 }

@@ -3,11 +3,19 @@
     ViewData["Title"] = "Mənim Məhsullarım";
 }
 
+@if (TempData["Success"] != null)
+{
+    <div class="alert alert-success alert-dismissible fade show">@TempData["Success"]<button type="button" class="btn-close" data-bs-dismiss="alert"></button></div>
+}
+@if (TempData["Error"] != null)
+{
+    <div class="alert alert-danger alert-dismissible fade show">@TempData["Error"]<button type="button" class="btn-close" data-bs-dismiss="alert"></button></div>
+}
+
 <div class="d-flex justify-content-between align-items-center mb-4">
     <h2>@ViewData["Title"]</h2>
     <a asp-action="Create" class="btn btn-primary"><i class="bi bi-plus-circle"></i> Yeni Məhsul</a>
 </div>
-
 @if (!Model.Any())
 {
     <div class="alert alert-info">Hələ heç bir məhsul əlavə etməmisiniz.</div>
@@ -28,11 +36,45 @@ else
                         <p class="card-text text-muted text-truncate">@item.Description</p>
                         <div class="d-flex justify-content-between align-items-center mt-3">
                             <span class="fs-5 fw-bold text-success">@item.Price AZN</span>
-                            <span class="badge bg-secondary">Stok: @item.StockQuantity</span>
+                            @if (item.StockQuantity <= 0)
+                            {
+                                <span class="badge bg-danger">Bitib</span>
+                            }
+                        </div>
+
+                        <!-- STOK ARTIR/AZALT -->
+                        <div class="d-flex align-items-center justify-content-between mt-3 p-2 bg-light rounded">
+                            <span class="text-muted small">Stok:</span>
+                            <div class="d-flex align-items-center gap-2">
+                                <form asp-action="UpdateStock" asp-route-id="@item.Id" method="post" class="d-inline">
+                                    <input type="hidden" name="change" value="-1" />
+                                    <button type="submit" class="btn btn-sm btn-outline-secondary" disabled="@(item.StockQuantity <= 0)">
+                                        <i class="bi bi-dash"></i>
+                                    </button>
+                                </form>
+                                <span class="fw-bold" style="min-width: 30px; text-align:center;">@item.StockQuantity</span>
+                                <form asp-action="UpdateStock" asp-route-id="@item.Id" method="post" class="d-inline">
+                                    <input type="hidden" name="change" value="1" />
+                                    <button type="submit" class="btn btn-sm btn-outline-secondary">
+                                        <i class="bi bi-plus"></i>
+                                    </button>
+                                </form>
+                            </div>
                         </div>
                     </div>
-                    <div class="card-footer bg-white border-top-0 d-flex justify-content-between">
+                    <div class="card-footer bg-white border-top-0 d-flex justify-content-between align-items-center">
                         <small class="text-muted"><i class="bi bi-tag-fill"></i> @item.Category?.Name</small>
+                        <div class="d-flex gap-2">
+                            <a asp-action="Edit" asp-route-id="@item.Id" class="btn btn-sm btn-outline-primary">
+                                <i class="bi bi-pencil"></i> Redaktə
+                            </a>
+                            <form asp-action="Delete" asp-route-id="@item.Id" method="post"
+                                  onsubmit="return confirm('Bu məhsulu silmək istədiyinizə əminsiniz?');">
+                                <button type="submit" class="btn btn-sm btn-outline-danger">
+                                    <i class="bi bi-trash"></i> Sil
+                                </button>
+                            </form>
+                        </div>
                     </div>
                 </div>
             </div>

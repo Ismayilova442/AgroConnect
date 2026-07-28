@@ -19,7 +19,7 @@ namespace AgroConnect.Infrastructure.Data
         public DbSet<ForumTopic> ForumTopics { get; set; }
         public DbSet<ForumReply> ForumReplies { get; set; }
         public DbSet<ChatMessage> ChatMessages { get; set; }
-
+       
         protected override void OnModelCreating(ModelBuilder builder)
         {
             base.OnModelCreating(builder);

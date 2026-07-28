@@ -21,16 +21,21 @@ namespace AgroConnect.Web.Controllers
             return View();
         }
 
+        // MÜVƏQQƏTİ: AI analiz funksiyası hazırda deaktivdir.
+        // Real API-ə qoşmaq üçün aşağıdakı "return View(\"ComingSoon\");" sətrini silib,
+        // altındaki şərh (comment) blokunu aktivləşdirin.
         [HttpPost]
-        public async Task<IActionResult> AnalyzeImage(IFormFile plantImage)
+        public IActionResult AnalyzeImage(IFormFile plantImage)
         {
+            return View("ComingSoon");
+
+            /*
             if (plantImage == null || plantImage.Length == 0)
             {
                 ViewBag.Error = "Zəhmət olmasa bitkinin şəklini yükləyin.";
                 return View("Index");
             }
 
-            // Yalnız şəkil faylına icazə veririk
             var allowedTypes = new[] { "image/jpeg", "image/png", "image/webp" };
             if (!allowedTypes.Contains(plantImage.ContentType))
             {
@@ -38,7 +43,6 @@ namespace AgroConnect.Web.Controllers
                 return View("Index");
             }
 
-            // 8 MB limit (OpenAI-ın öz limitinə uyğun)
             if (plantImage.Length > 8 * 1024 * 1024)
             {
                 ViewBag.Error = "Şəkil çox böyükdür (maksimum 8 MB).";
@@ -66,6 +70,7 @@ namespace AgroConnect.Web.Controllers
             }
 
             return View("Index");
+            */
         }
 
         private async Task<string> AnalyzeWithAiAsync(string imageDataUrl)

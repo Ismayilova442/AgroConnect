@@ -8,6 +8,7 @@ using Microsoft.EntityFrameworkCore;
 
 namespace AgroConnect.Web.Controllers
 {
+    [Authorize(Roles = "Farmer,SuperAdmin")]
     public class ForumController : Controller
     {
         private readonly ApplicationDbContext _context;
@@ -30,14 +31,12 @@ namespace AgroConnect.Web.Controllers
             return View(topics);
         }
 
-        [Authorize]
         [HttpGet]
         public IActionResult Create()
         {
             return View();
         }
 
-        [Authorize]
         [HttpPost]
         public async Task<IActionResult> Create(ForumTopicViewModel model)
         {
@@ -77,7 +76,6 @@ namespace AgroConnect.Web.Controllers
             return View(topic);
         }
 
-        [Authorize]
         [HttpPost]
         public async Task<IActionResult> Reply(ForumReplyViewModel model)
         {
@@ -94,14 +92,13 @@ namespace AgroConnect.Web.Controllers
 
                 _context.ForumReplies.Add(reply);
                 await _context.SaveChangesAsync();
-                
+
                 return RedirectToAction(nameof(Details), new { id = model.TopicId });
             }
 
             return RedirectToAction(nameof(Details), new { id = model.TopicId });
         }
 
-        [Authorize]
         [HttpPost]
         public async Task<IActionResult> MarkBestAnswer(int replyId)
         {
