@@ -1,8 +1,8 @@
-/* --- �mumi Ayarlar --- */
+﻿/* --- Ümumi Ayarlar --- */
 html {
     font-size: 14px;
     position: relative;
-    min-height: 100%;
+    height: 100%;
 }
 
 @media (min-width: 768px) {
@@ -16,14 +16,23 @@ body {
     background-color: #f4f7f5;
     color: #333;
     overflow-x: hidden;
-    margin-bottom: 60px;
+    /* BOŞLUĞU LƏĞV EDƏN KODLAR BURADADIR */
+    margin-bottom: 0 !important; /* Standart 60px boşluğu silirik */
+    display: flex;
+    flex-direction: column;
+    min-height: 100vh; /* Səhifənin 100% ekran hündürlüyünü almasını təmin edirik */
 }
+
+    /* Əsas məzmun olan konteynerin bütün boş sahəni doldurması üçün */
+    body > .container {
+        flex: 1;
+    }
 
 .btn:focus, .btn:active:focus, .btn-link.nav-link:focus, .form-control:focus, .form-check-input:focus {
     box-shadow: 0 0 0 0.1rem white, 0 0 0 0.25rem #258cfb;
 }
 
-/* --- Hero B�lm?si --- */
+/* --- Hero Bölm?si --- */
 .hero-section {
     background: linear-gradient(rgba(46, 125, 50, 0.85), rgba(27, 94, 32, 0.9)), url('https://images.unsplash.com/photo-1500937386664-56d1dfef3854?auto=format&fit=crop&w=1920&q=80') no-repeat center center/cover;
     color: white;
@@ -67,7 +76,7 @@ body {
         box-shadow: 0 6px 20px rgba(255, 179, 0, 0.6);
     }
 
-/* --- Kartlar B�lm?si --- */
+/* --- Kartlar Bölm?si --- */
 .section-title {
     margin-top: 40px;
     margin-bottom: 30px;
@@ -151,7 +160,7 @@ body {
     transform: translateX(5px);
 }
 
-/* --- Modern Navbar �slubu --- */
+/* --- Modern Navbar Üslubu --- */
 .custom-navbar {
     background-color: #ffffff !important;
     border-bottom: 2px solid #e8f5e9;
@@ -250,7 +259,7 @@ body {
         transform: scale(1.05);
     }
 
-/* Hamburger D�ym?si */
+/* Hamburger Düym?si */
 .custom-toggler {
     border: none !important;
     padding: 6px !important;
@@ -305,10 +314,10 @@ body {
 
 
 /* ==========================================================================
-   RESPONS?V BREAKPOINTS (B�T�N DIAPAZONLARDA BO?LUQLARIN T?MZ?ML?NM?S?)
+   RESPONS?V BREAKPOINTS (BÜTÜN DIAPAZONLARDA BO?LUQLARIN T?MZ?ML?NM?S?)
    ========================================================================== */
 
-/* --- 300px - 991px ARASI TAM STRUKTUR (HE� B?R BO?LUQ BURAXMIR) --- */
+/* --- 300px - 991px ARASI TAM STRUKTUR (HEÇ B?R BO?LUQ BURAXMIR) --- */
 
 /* 1. Diapazon: 300px - 576px */
 @media (min-width: 300px) and (max-width: 576px) {
@@ -504,14 +513,14 @@ body {
         flex-wrap: wrap !important;
     }
 
-        /* Yuxar?dak? ilk 3 kart? bu aral?qda tam 100% edirik ki, alt-alta s?liq?li d�?s�nl?r v? bo?luq buraxmas?nlar */
+        /* Yuxar?dak? ilk 3 kart? bu aral?qda tam 100% edirik ki, alt-alta s?liq?li dü?sünl?r v? bo?luq buraxmas?nlar */
         .container .row > .col-lg-4 {
             width: 100% !important;
             flex: 0 0 100% !important;
             max-width: 100% !important;
         }
 
-        /* A?a??dak? 2 kart? (X?rit? v? Forum) is? yan-yana 50% olaraq b?rab?r b�l�r�k */
+        /* A?a??dak? 2 kart? (X?rit? v? Forum) is? yan-yana 50% olaraq b?rab?r bölürük */
         .container .row > .col-lg-6 {
             width: 50% !important;
             flex: 0 0 50% !important;
@@ -519,7 +528,7 @@ body {
         }
 
     .agro-card {
-        height: auto !important; /* H�nd�rl�k s?x?lmas?n? l??v edir */
+        height: auto !important; /* Hündürlük s?x?lmas?n? l??v edir */
         margin-bottom: 20px;
     }
 
@@ -532,8 +541,8 @@ body {
         }
 }
 
-/* 4. Diapazon: 991px - 1024px (Ke�id n�qt?si t?nziml?ndi - Bo?luq yoxdur) */
-@media (min-width: 991px) and (max-width: 1024px) {
+/* 4. Diapazon: 991px - 1024px (Keçid nöqt?si t?nziml?ndi - Bo?luq yoxdur) */
+/*@media (min-width: 991px) and (max-width: 1024px) {
     .custom-navbar .navbar-toggler {
         display: none !important;
     }
@@ -568,9 +577,9 @@ body {
     .agro-card {
         padding: 28px 18px;
     }
-}
+}*/
 
-/* 5. Ekran: 1024px v? daha b�y�k */
+/* 5. Ekran: 1024px v? daha böyük */
 @media (min-width: 1025px) {
     .custom-navbar .navbar-toggler {
         display: none !important;
@@ -884,7 +893,7 @@ body {
     height: 3rem;
 }
 <style >
-/* --- �MUM? MODERN?ZAS?YA --- */
+/* --- ÜMUM? MODERN?ZAS?YA --- */
 .bg-success {
     background: linear-gradient(135deg, #1f9c55 0%, #0f6834 100%) !important;
     border: none;
@@ -980,10 +989,10 @@ body {
 }
 
 /* ==========================================================================
-       RESPONSIVELIK - EKRAN �L��L?R?N? G�R? OPT?M?ZAS?YA (MEDIA QUERIES)
+       RESPONSIVELIK - EKRAN ÖLÇÜL?R?N? GÖR? OPT?M?ZAS?YA (MEDIA QUERIES)
        ========================================================================== */
 
-/* 1. �ox ki�ik mobil ekranlar (300px - 576px) */
+/* 1. Çox kiçik mobil ekranlar (300px - 576px) */
 @media (min-width: 300px) and (max-width: 575.98px) {
     .bg-success {
         padding: 2.5rem 1rem !important;
@@ -1000,7 +1009,7 @@ body {
     .col-md-9 .row-cols-1 {
         --bs-gutter-y: 1rem;
     }
-    /* Bu ekranda kartlar yan-yana s??mad??? ���n alt-alta 1 s�tun olacaq */
+    /* Bu ekranda kartlar yan-yana s??mad??? üçün alt-alta 1 sütun olacaq */
     .col-md-9 .col {
         width: 100% !important;
     }
@@ -1010,12 +1019,12 @@ body {
     }
 }
 
-/* 2. Orta-ki�ik mobil v? plan?etl?r (576px - 778px) */
+/* 2. Orta-kiçik mobil v? plan?etl?r (576px - 778px) */
 @media (min-width: 576px) and (max-width: 777.98px) {
     .bg-success {
         padding: 3rem 1.5rem !important;
     }
-    /* Grid strukturunu 2 s�tunlu edirik ki, bo?luq qalmas?n */
+    /* Grid strukturunu 2 sütunlu edirik ki, bo?luq qalmas?n */
     .col-md-9 .col {
         width: 50% !important;
     }
@@ -1025,13 +1034,13 @@ body {
     }
 }
 
-/* 3. Plan?etl?r v? ki�ik noutbuklar (778px - 991px) */
+/* 3. Plan?etl?r v? kiçik noutbuklar (778px - 991px) */
 @media (min-width: 778px) and (max-width: 990.98px) {
-    /* Bu �l��d? Bootstrap-in col-md-3 v? col-md-9-u yan-yana i?l?yir */
+    /* Bu ölçüd? Bootstrap-in col-md-3 v? col-md-9-u yan-yana i?l?yir */
     .col-md-9 .col {
         width: 50% !important;
     }
-    /* S?hif?y? rahat s??mas? ���n grid 2 s�tun olur */
+    /* S?hif?y? rahat s??mas? üçün grid 2 sütun olur */
     .card-title {
         font-size: 1.05rem;
     }
@@ -1041,35 +1050,273 @@ body {
     }
 }
 
-/* 4. Standart noutbuklar v? monitorlar (991px - 1024px) */
-@media (min-width: 991px) and (max-width: 1024px) {
-    .col-md-9 .col {
-        width: 33.3333% !important;
-    }
-    /* Yan-yana tam 3 c?rciv? s???r */
-    .card-body {
-        padding: 15px;
+/* 4. Diapazon: 992px - 1199.98px (Planşet və kiçik noutbuklar üçün navbarın sığması) */
+@media (min-width: 992px) and (max-width: 1199.98px) {
+    .custom-navbar .navbar-toggler {
+        display: none !important;
     }
 
-    .input-group .btn-outline-success {
-        font-size: 0.85rem;
-        padding: 5px 10px;
+    .custom-brand {
+        font-size: 1.1rem;
+        gap: 4px;
+    }
+
+    /* Elementlər sığsın deyə linklərin şriftini və daxili boşluğunu (padding) kiçildiririk */
+    .custom-navbar .nav-link {
+        font-size: 0.8rem !important;
+        padding: 6px 6px !important;
+        gap: 3px;
+    }
+
+        .custom-navbar .nav-link i {
+            font-size: 0.85rem;
+        }
+
+    /* "Badge" tipli xüsusi linklərin ölçüsünü də uyğunlaşdırırıq */
+    .link-admin, .link-fermer-ol, .link-chat, .link-ai {
+        padding: 0.35rem 0.6rem !important;
+        font-size: 0.8rem !important;
+    }
+
+    #navbarAgro .navbar-nav {
+        gap: 2px !important;
+    }
+
+    #navbarAgro .d-flex.align-items-center {
+        gap: 0.5rem;
+    }
+
+    .hero-section {
+        padding: 85px 25px;
+    }
+
+        .hero-section h1 {
+            font-size: 2.4rem;
+        }
+
+    .agro-card {
+        padding: 25px 15px;
     }
 }
 
-/* 5. B�y�k ekranlar (1024px v? daha yuxar?) */
+/* 5. Ekran: 1200px və daha böyük (Geniş monitorlar və noutbuklar) */
+@media (min-width: 1200px) {
+    .custom-navbar .navbar-toggler {
+        display: none !important;
+    }
+
+    .container-fluid {
+        padding-left: 30px;
+        padding-right: 30px;
+    }
+
+    .custom-brand {
+        font-size: 1.35rem;
+    }
+
+    .custom-navbar .nav-link {
+        font-size: 0.9rem !important;
+        padding: 8px 12px !important;
+    }
+
+    .hero-section {
+        padding: 100px 20px;
+    }
+
+        .hero-section h1 {
+            font-size: 3rem;
+        }
+
+        .hero-section p {
+            font-size: 1.2rem;
+        }
+
+    .agro-card {
+        padding: 30px 20px;
+    }
+}
+/* ==========================================
+   FOOTER DİZAYNI (Ümumi Stajlar)
+   ========================================== */
+.custom-footer {
+    background-color: #ffffff;
+    padding: 35px 0 15px 0;
+    margin-top: auto;
+    width: 100%;
+}
+
+.footer-content {
+    display: flex;
+    align-items: center;
+    justify-content: space-between;
+    flex-wrap: wrap;
+    padding-bottom: 20px;
+    border-bottom: 1px solid #f1f1f1;
+}
+
+/* Brend Hissəsi */
+.footer-brand {
+    display: flex;
+    align-items: center;
+    gap: 8px;
+    font-size: 1.6rem;
+    font-weight: 600;
+    color: #2e7d32;
+    letter-spacing: 0.2px;
+}
+
+    .footer-brand .logo-icon {
+        color: #ffb300;
+    }
+
+    .footer-brand .brand-text span {
+        color: #ffb300;
+    }
+
+/* Linklər (Sevimlilərim) */
+.footer-links {
+    display: flex;
+    align-items: center;
+    gap: 15px;
+}
+
+.footer-link-item {
+    text-decoration: none;
+    color: #6c757d;
+    font-weight: 500;
+    font-size: 1.05rem;
+    display: flex;
+    align-items: center;
+    gap: 6px;
+    transition: all 0.3s ease;
+}
+
+    .footer-link-item:hover {
+        color: #2e7d32;
+    }
+
+.wishlist-link i {
+    color: #dc3545;
+    transition: transform 0.3s cubic-bezier(0.175, 0.885, 0.32, 1.275);
+}
+
+.wishlist-link:hover i {
+    transform: scale(1.3); /* Üzərinə gələndə ürək böyüyür */
+}
+
+/* Sosial Şəbəkə Düymələri */
+.footer-social {
+    display: flex;
+    align-items: center;
+    gap: 12px;
+}
+
+.social-btn {
+    display: flex;
+    align-items: center;
+    justify-content: center;
+    width: 42px;
+    height: 42px;
+    border-radius: 50%;
+    color: #ffffff !important;
+    font-size: 1.2rem;
+    text-decoration: none;
+    transition: all 0.3s ease;
+}
+
+    .social-btn:hover {
+        transform: translateY(-5px); /* Üzərinə gələndə yuxarı qalxır */
+        box-shadow: 0 6px 15px rgba(0, 0, 0, 0.15);
+    }
+
+    /* Brand rəngləri */
+    .social-btn.whatsapp {
+        background-color: #25d366;
+    }
+
+    .social-btn.instagram {
+        /* Instagram-ın rəsmi qradiyent rəngi */
+        background: linear-gradient(45deg, #f09433 0%, #e6683c 25%, #dc2743 50%, #cc2366 75%, #bc1888 100%);
+    }
+
+    .social-btn.tiktok {
+        background-color: #000000;
+    }
+
+/* Ən alt Copyright mətni */
+.footer-bottom {
+    text-align: center;
+    padding-top: 15px;
+    color: #888;
+    font-size: 0.9rem;
+}
+
+    .footer-bottom p {
+        margin: 0;
+    }
+
+
+/* ==========================================
+   RESPONSİVLİK (Media Queries)
+   ========================================== */
+
+/* 1. Çox kiçik mobil ekranlar (300px - 576px) */
+@media (min-width: 300px) and (max-width: 575.98px) {
+    .footer-content {
+        flex-direction: column; /* Şaquli yığılır */
+        text-align: center;
+        gap: 25px;
+    }
+
+    .footer-brand, .footer-links, .footer-social {
+        justify-content: center;
+        width: 100%;
+    }
+
+    .footer-brand {
+        font-size: 1.4rem;
+    }
+}
+
+/* 2. Orta-kiçik mobil və planşetlər (576px - 778px) */
+@media (min-width: 576px) and (max-width: 777.98px) {
+    .footer-content {
+        flex-direction: column;
+        gap: 25px;
+    }
+
+    .footer-brand, .footer-links, .footer-social {
+        justify-content: center;
+        width: 100%;
+    }
+}
+
+/* 3. Planşetlər və kiçik noutbuklar (778px - 991px) */
+@media (min-width: 778px) and (max-width: 990.98px) {
+    .footer-content {
+        flex-direction: row;
+        justify-content: space-around; /* Elementlər arasına bərabər boşluq */
+        gap: 15px;
+    }
+
+    .footer-brand {
+        font-size: 1.5rem;
+    }
+}
+
+/* 4. Standart noutbuklar (991px - 1024px) */
+@media (min-width: 991px) and (max-width: 1024px) {
+    .footer-content {
+        flex-direction: row;
+        justify-content: space-between;
+    }
+}
+
+/* 5. Böyük ekranlar (1024px və daha yuxarı) */
 @media (min-width: 1024.02px) {
-    .container, .container-fluid {
-        max-width: 1280px;
-        margin: 0 auto;
-    }
-
-    .col-md-9 .col {
-        width: 33.3333% !important;
-    }
-
-    .product-card img {
-        height: 210px;
+    .footer-content {
+        flex-direction: row;
+        justify-content: space-between;
     }
 }
 

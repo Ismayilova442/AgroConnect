@@ -9,13 +9,194 @@
     <link rel="stylesheet" href="~/AgroConnect.Web.styles.css" asp-append-version="true" />
     <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.4.0/css/all.min.css" />
     <link rel="stylesheet" href="https://cdn.jsdelivr.net/npm/bootstrap-icons@1.11.0/font/bootstrap-icons.css">
-    <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.4.0/css/all.min.css" />
+
+    <style>
+        /* ================= NAVBAR REDESIGN ================= */
+        .custom-navbar {
+            background: #ffffff;
+            padding: 0.55rem 1.25rem;
+            box-shadow: 0 2px 12px rgba(0, 0, 0, 0.07);
+            position: sticky;
+            top: 0;
+            z-index: 1030;
+        }
+
+        .custom-brand {
+            font-size: 1.35rem;
+            font-weight: 700;
+            white-space: nowrap;
+            display: flex;
+            align-items: center;
+            gap: 6px;
+        }
+
+        #navbarAgro .navbar-nav {
+            align-items: center;
+            gap: 2px;
+        }
+
+        #navbarAgro .nav-item .nav-link {
+            display: inline-flex;
+            align-items: center;
+            gap: 6px;
+            white-space: nowrap;
+            padding: 0.5rem 0.85rem;
+            border-radius: 8px;
+            font-weight: 500;
+            font-size: 0.93rem;
+            color: #3a3a3a;
+            transition: background-color 0.15s ease, color 0.15s ease;
+        }
+
+            #navbarAgro .nav-item .nav-link:hover {
+                background-color: #eef5ef;
+                color: #2e7d32;
+            }
+
+            #navbarAgro .nav-item .nav-link i {
+                font-size: 1rem;
+                line-height: 1;
+            }
+
+        /* Xüsusi ("badge" tərzli) linklər - vahid dizayn */
+        .link-admin,
+        .link-fermer-ol,
+        .link-chat,
+        .link-ai {
+            border-radius: 20px !important;
+            padding: 0.45rem 0.95rem !important;
+        }
+
+        .link-admin {
+            background-color: #212529;
+            color: #ffffff !important;
+        }
+
+            .link-admin:hover {
+                background-color: #000000;
+                color: #ffffff !important;
+            }
+
+        .link-fermer-ol {
+            background-color: #fff3cd;
+            color: #856404 !important;
+        }
+
+            .link-fermer-ol:hover {
+                background-color: #ffe8a1;
+                color: #6b5300 !important;
+            }
+
+        .link-chat {
+            background-color: #e8f5e9;
+            color: #2e7d32 !important;
+        }
+
+            .link-chat:hover {
+                background-color: #d4ecd6;
+            }
+
+        .link-ai {
+            background-color: #e3f2fd;
+            color: #1565c0 !important;
+        }
+
+            .link-ai:hover {
+                background-color: #cfe8fc;
+            }
+
+        /* Səbət ikonu */
+        .cart-wrapper {
+            width: 42px;
+            height: 42px;
+            border-radius: 50%;
+            background-color: #eef5ef;
+            display: flex;
+            align-items: center;
+            justify-content: center;
+            transition: background-color 0.15s ease;
+        }
+
+            .cart-wrapper:hover {
+                background-color: #dcede0;
+            }
+
+        /* Login/Logout hissəsi */
+        #navbarAgro .d-flex.align-items-center {
+            gap: 0.75rem;
+        }
+
+        /* Toggler (hamburger) düyməsinin görünüşü */
+        .custom-toggler {
+            border: none;
+            padding: 0.4rem;
+        }
+
+            .custom-toggler:focus {
+                box-shadow: none;
+            }
+
+        /* ================= RESPONSIVE (mobil/tablet) =================
+           navbar-expand-lg 992px-də collapse olur, ona görə bu qaydalar
+           da MƏHZ 991.98px-ə qədər tətbiq olunmalıdır (1024px yox).
+           Əvvəlki eyni bloğun DUBLİKATI silindi. */
+        /* @@media (max-width: 991.98px) {
+            .custom-navbar
+
+        {
+                padding: 0.5rem 1rem !important;
+            }
+
+        #navbarAgro {
+                margin-top: 0.75rem !important;
+                border-top: 1px solid #eee !important;
+                padding-top: 0.5rem !important;
+        }
+
+            #navbarAgro .navbar-nav {
+                    width: 100% !important;
+                    gap: 0 !important;
+            }
+
+            #navbarAgro .nav-item {
+                    width: 100% !important;
+                    border-bottom: 1px solid #f2f2f2 !important;
+            }
+
+                #navbarAgro .nav-item .nav-link {
+                        width: 100% !important;
+                        border-radius: 0 !important;
+                        padding: 0.7rem 0.5rem !important;
+                }
+
+        .link-admin, .link-fermer-ol, .link-chat, .link-ai {
+            border-radius: 8px !important;
+                margin: 2px 0 !important;
+        }
+
+        #navbarAgro .d-flex.align-items-center {
+                width: 100% !important;
+                justify-content: flex-start !important;
+                padding-top: 0.5rem !important;
+        }
+
+        }
+
+        @@media (max-width: 400px) {
+            .custom-brand
+
+        {
+                font-size: 1.1rem !important;
+        }
+
+        } */
+    </style>
 </head>
 <body>
-   
+
 
     <header>
-        <nav class="navbar navbar-expand-sm navbar-light custom-navbar">
+        <nav class="navbar navbar-expand-lg navbar-light custom-navbar">
             <div class="container-fluid">
                 <!-- Brend / Loqo -->
                 <a class="navbar-brand custom-brand" asp-area="" asp-controller="Home" asp-action="Index">
@@ -23,8 +204,8 @@
                 </a>
 
                 <!-- Mobil Versiyada Sağda Dayanan Hissə (Səbət və Hamburger) -->
-                <div class="d-flex d-flex-mobile order-sm-3">
-                    <ul class="navbar-nav me-2 me-sm-0">
+                <div class="d-flex d-flex-mobile order-lg-3 align-items-center">
+                    <ul class="navbar-nav me-2 me-lg-0">
                         <li class="nav-item">
                             <a class="nav-link text-success cart-wrapper" asp-area="" asp-controller="Marketplace" asp-action="Cart">
                                 <i class="bi bi-cart3 fs-5"></i>
@@ -41,8 +222,8 @@
                 </div>
 
                 <!-- Menyu Linkləri -->
-                <div class="collapse navbar-collapse justify-content-between order-sm-2" id="navbarAgro">
-                    <ul class="navbar-nav flex-grow-1 ms-sm-3">
+                <div class="collapse navbar-collapse justify-content-between order-lg-2" id="navbarAgro">
+                    <ul class="navbar-nav flex-grow-1 ms-lg-3">
                         <li class="nav-item">
                             <a class="nav-link" asp-area="" asp-controller="Home" asp-action="Index">
                                 <i class="bi bi-house-door"></i> Ana Səhifə
@@ -79,30 +260,46 @@
                                 <i class="bi bi-shop"></i> Marketplace
                             </a>
                         </li>
-                        <li class="nav-item">
-                            <a class="nav-link" asp-area="" asp-controller="Forum" asp-action="Index">
-                                <i class="bi bi-chat-square-text"></i> Forum
-                            </a>
-                        </li>
-                        <li class="nav-item">
-                            <a class="nav-link link-chat fw-bold" asp-area="" asp-controller="Chat" asp-action="Index">
-                                <i class="bi bi-broadcast"></i> Canlı Çat
-                            </a>
-                        </li>
-                        <li class="nav-item">
+                        @if (User.Identity != null && User.Identity.IsAuthenticated)
+                        {
+                            <li class="nav-item">
+                                <a class="nav-link" asp-area="" asp-controller="Marketplace" asp-action="MyOrders">
+                                    <i class="bi bi-bag-check"></i> Sifarişlərim
+                                </a>
+                            </li>
+                        }
+                        @if (User.IsInRole("Farmer"))
+                        {
+                            @* <li class="nav-item">
+                                <a class="nav-link" asp-area="" asp-controller="Forum" asp-action="Index">
+                                    <i class="bi bi-chat-square-text"></i> Forum
+                                </a>
+                            </li> *@
+                            @* <li class="nav-item">
+                                <a class="nav-link link-chat fw-bold" asp-area="" asp-controller="Chat" asp-action="Index">
+                                    <i class="bi bi-broadcast"></i> Canlı Çat
+                                </a>
+                            </li> *@
+                        }
+                        @* <li class="nav-item">
                             <a class="nav-link" asp-area="" asp-controller="Map" asp-action="Index">
                                 <i class="bi bi-geo-alt"></i> Xəritə
                             </a>
-                        </li>
-                        <li class="nav-item">
+                        </li> *@
+                        @* <li class="nav-item">
                             <a class="nav-link link-ai fw-bold" asp-area="" asp-controller="AICoach" asp-action="Index">
                                 <i class="bi bi-robot"></i> AI Aqronom
+                            </a>
+                        </li> *@
+                        <li class="nav-item">
+                            <a class="nav-link" asp-area="" asp-controller="Complaint" asp-action="Index">
+                                <i class="bi bi-megaphone"></i> Şikayətlər
                             </a>
                         </li>
                     </ul>
 
                     <!-- Giriş / Qeydiyyat qismi -->
-                    <div class="d-flex align-items-center mt-3 mt-sm-0">
+                    <div class="d-flex align-items-center mt-3 mt-lg-0">
                         <partial name="_LoginPartial" />
                     </div>
                 </div>
@@ -115,21 +312,46 @@
         </main>
     </div>
 
-    <footer class="border-top footer text-muted">
-        <div style="display: flex; justify-content: center; align-items: center; margin: 10px 0;">
-            <h2 style="
-        font-size: 1rem;
-        font-weight: 400;
-        color: #2e7d32;
-        display: flex;
-        align-items: center;
-        gap: 10px;
-        font-size: 1.5rem;
-        letter-spacing: 0.2px;">
+    <footer class="custom-footer border-top">
+        <div class="container">
+            <div class="footer-content">
+                <!-- Brend Hissəsi -->
+                <div class="footer-brand">
+                    <i class="fas fa-leaf logo-icon"></i>
+                    <span class="brand-text">Agro<span>Connect</span> Hub</span>
+                </div>
 
-                <i class="fas fa-leaf" style="color: #ffb300;"></i>
-                Agro<span style="color: #ffb300;">Connect</span> Hub
-            </h2>
+                <!-- Mərkəzi Linklər (Sevimlilərim) -->
+                <div class="footer-links">
+                    @if (User.Identity != null && User.Identity.IsAuthenticated)
+                    {
+                        <a asp-controller="Wishlist" asp-action="Index" class="footer-link-item wishlist-link">
+                            <i class="bi bi-heart-fill"></i> Sevimlilərim
+                        </a>
+                    }
+                </div>
+
+                <!-- Sosial Şəbəkələr -->
+                <div class="footer-social">
+                    <!-- WhatsApp -->
+                    <a href="https://wa.me/994xxxxxxxxx" class="social-btn whatsapp" target="_blank" title="WhatsApp">
+                        <i class="bi bi-whatsapp"></i>
+                    </a>
+                    <!-- Instagram -->
+                    <a href="https://instagram.com/sizin_hesab" class="social-btn instagram" target="_blank" title="Instagram">
+                        <i class="bi bi-instagram"></i>
+                    </a>
+                    <!-- TikTok -->
+                    <a href="https://tiktok.com/sizin_hesab" class="social-btn tiktok" target="_blank" title="TikTok">
+                        <i class="bi bi-tiktok"></i>
+                    </a>
+                </div>
+            </div>
+
+            <!-- Ən alt hissə (Copyright) -->
+            <div class="footer-bottom">
+                <p>&copy; @DateTime.Now.Year AgroConnect. Bütün hüquqlar qorunur.</p>
+            </div>
         </div>
     </footer>
     <script src="~/lib/jquery/dist/jquery.min.js"></script>

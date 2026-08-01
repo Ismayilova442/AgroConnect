@@ -17,5 +17,6 @@ namespace AgroConnect.Domain.Entities
         public FarmerProfile? FarmerProfile { get; set; }
 
         public ICollection<OrderItem> OrderItems { get; set; } = new List<OrderItem>();
+        public ICollection<ProductReview> Reviews { get; set; } = new List<ProductReview>();
     }
 }

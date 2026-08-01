@@ -19,7 +19,9 @@ namespace AgroConnect.Infrastructure.Data
         public DbSet<ForumTopic> ForumTopics { get; set; }
         public DbSet<ForumReply> ForumReplies { get; set; }
         public DbSet<ChatMessage> ChatMessages { get; set; }
-       
+        public DbSet<Complaint> Complaints { get; set; }
+        public DbSet<Wishlist> Wishlists { get; set; }
+        public DbSet<ProductReview> ProductReviews { get; set; }
         protected override void OnModelCreating(ModelBuilder builder)
         {
             base.OnModelCreating(builder);
@@ -64,6 +66,28 @@ namespace AgroConnect.Infrastructure.Data
                 .HasOne(cm => cm.ApplicationUser)
                 .WithMany()
                 .HasForeignKey(cm => cm.ApplicationUserId)
+                .OnDelete(DeleteBehavior.Restrict);
+            builder.Entity<ProductReview>()
+    .HasOne(r => r.Product)
+    .WithMany(p => p.Reviews)
+    .HasForeignKey(r => r.ProductId)
+    .OnDelete(DeleteBehavior.Restrict);
+
+            builder.Entity<ProductReview>()
+                .HasOne(r => r.ApplicationUser)
+                .WithMany()
+                .HasForeignKey(r => r.ApplicationUserId)
+                .OnDelete(DeleteBehavior.Restrict);
+            builder.Entity<Wishlist>()
+    .HasOne(w => w.ApplicationUser)
+    .WithMany()
+    .HasForeignKey(w => w.ApplicationUserId)
+    .OnDelete(DeleteBehavior.Restrict);
+
+            builder.Entity<Wishlist>()
+                .HasOne(w => w.Product)
+                .WithMany()
+                .HasForeignKey(w => w.ProductId)
                 .OnDelete(DeleteBehavior.Restrict);
         }
     }

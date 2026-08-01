@@ -1,0 +1,37 @@
+﻿@model AgroConnect.Web.ViewModels.ComplaintViewModel
+@{
+    ViewData["Title"] = "Şikayət Yaz";
+}
+
+<div class="row justify-content-center">
+    <div class="col-lg-6 col-md-8 col-12">
+        <div class="card shadow-sm border-0">
+            <div class="card-header bg-danger text-white">
+                <h4 class="mb-0"><i class="bi bi-megaphone me-2"></i>Şikayət Yaz</h4>
+            </div>
+            <div class="card-body p-4">
+                <div asp-validation-summary="ModelOnly" class="text-danger mb-3"></div>
+
+                <form asp-action="Create" method="post">
+                    <div class="mb-3">
+                        <label asp-for="Subject" class="form-label fw-bold">Mövzu</label>
+                        <input asp-for="Subject" class="form-control" placeholder="Şikayətin qısa başlığı" />
+                        <span asp-validation-for="Subject" class="text-danger"></span>
+                    </div>
+                    <div class="mb-3">
+                        <label asp-for="Content" class="form-label fw-bold">Şikayət Mətni</label>
+                        <textarea asp-for="Content" class="form-control" rows="5" placeholder="Şikayətinizi ətraflı yazın..."></textarea>
+                        <span asp-validation-for="Content" class="text-danger"></span>
+                    </div>
+
+                    <div class="d-flex flex-column flex-sm-row gap-2 mt-4">
+                        <button type="submit" class="btn btn-danger flex-fill">
+                            <i class="bi bi-send me-1"></i> Göndər
+                        </button>
+                        <a asp-action="Index" class="btn btn-outline-secondary flex-fill">Geri qayıt</a>
+                    </div>
+                </form>
+            </div>
+        </div>
+    </div>
+</div>

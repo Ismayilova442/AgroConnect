@@ -1,0 +1,171 @@
+﻿@model IEnumerable<AgroConnect.Domain.Entities.Order>
+@using AgroConnect.Domain.Entities
+@using Microsoft.AspNetCore.Identity
+@inject UserManager<ApplicationUser> UserManager
+@inject AgroConnect.Infrastructure.Data.ApplicationDbContext DbContext
+@{
+    ViewData["Title"] = "Mənim Sifarişlərim";
+    var currentUserId = UserManager.GetUserId(User);
+    var reviewedProductIds = new HashSet<int>();
+    if (currentUserId != null)
+    {
+        reviewedProductIds = DbContext.ProductReviews
+            .Where(r => r.ApplicationUserId == currentUserId)
+            .Select(r => r.ProductId)
+            .ToHashSet();
+    }
+}
+
+@if (TempData["Success"] != null)
+{
+    <div class="alert alert-success alert-dismissible fade show">@TempData["Success"]<button type="button" class="btn-close" data-bs-dismiss="alert"></button></div>
+}
+@if (TempData["Error"] != null)
+{
+    <div class="alert alert-danger alert-dismissible fade show">@TempData["Error"]<button type="button" class="btn-close" data-bs-dismiss="alert"></button></div>
+}
+
+<div class="d-flex justify-content-between align-items-center mb-4">
+    <h2><i class="bi bi-bag-check text-success"></i> Mənim Sifarişlərim</h2>
+</div>
+
+@if (!Model.Any())
+{
+    <div class="alert alert-info">
+        Hələ heç bir sifarişiniz yoxdur. <a asp-action="Index">Alış-verişə başlayın!</a>
+    </div>
+}
+else
+{
+    <div class="row row-cols-1 g-4">
+        @foreach (var order in Model)
+        {
+            var badgeClass = order.Status switch
+            {
+                OrderStatus.Pending => "bg-warning text-dark",
+                OrderStatus.Processing => "bg-info text-dark",
+                OrderStatus.Shipped => "bg-primary",
+                OrderStatus.Delivered => "bg-success",
+                OrderStatus.Cancelled => "bg-danger",
+                _ => "bg-secondary"
+            };
+
+            var statusText = order.Status switch
+            {
+                OrderStatus.Pending => "Gözləyir",
+                OrderStatus.Processing => "Hazırlanır",
+                OrderStatus.Shipped => "Yola çıxarılıb",
+                OrderStatus.Delivered => "Çatdırılıb",
+                OrderStatus.Cancelled => "Ləğv edilib",
+                _ => order.Status.ToString()
+            };
+
+            <div class="col">
+                <div class="card shadow-sm border-0">
+                    <div class="card-header bg-white d-flex flex-wrap justify-content-between align-items-center gap-2">
+                        <div>
+                            <strong>Sifariş #@order.Id</strong>
+                            <span class="text-muted small ms-2">@order.OrderDate.ToString("dd.MM.yyyy HH:mm")</span>
+                        </div>
+                        <span class="badge @badgeClass">@statusText</span>
+                    </div>
+                    <div class="card-body">
+                        <div class="table-responsive">
+                            <table class="table table-sm align-middle mb-3">
+                                <thead>
+                                    <tr class="text-muted small">
+                                        <th>Məhsul</th>
+                                        <th>Say</th>
+                                        <th>Qiymət</th>
+                                        <th>Cəmi</th>
+                                        <th></th>
+                                    </tr>
+                                </thead>
+                                <tbody>
+                                    @foreach (var item in order.OrderItems)
+                                    {
+                                        var alreadyReviewed = item.ProductId != 0 && reviewedProductIds.Contains(item.ProductId);
+                                        <tr>
+                                            <td>
+                                                @if (!string.IsNullOrEmpty(item.Product?.ImageUrl))
+                                                {
+                                                    <img src="@item.Product.ImageUrl" style="width:36px;height:36px;object-fit:cover;border-radius:6px;" class="me-2" />
+                                                }
+                                                @(item.Product?.Title ?? "Silinmiş məhsul")
+                                            </td>
+                                            <td>@item.Quantity</td>
+                                            <td>@item.UnitPrice.ToString("0.00") AZN</td>
+                                            <td class="fw-bold">@((item.Quantity * item.UnitPrice).ToString("0.00")) AZN</td>
+                                            <td>
+                                                @if (item.Product != null)
+                                                {
+                                                    @if (alreadyReviewed)
+                                                    {
+                                                        <span class="badge bg-light text-success border"><i class="bi bi-check-circle"></i> Rəy yazılıb</span>
+                                                    }
+                                                    else
+                                                    {
+                                                        <button type="button" class="btn btn-sm btn-outline-warning"
+                                                                data-bs-toggle="modal" data-bs-target="#reviewModal-@item.Id">
+                                                            <i class="bi bi-star"></i> Rəy yaz
+                                                        </button>
+
+                                                        <!-- RƏY MODAL -->
+                                                        <div class="modal fade" id="reviewModal-@item.Id" tabindex="-1">
+                                                            <div class="modal-dialog">
+                                                                <div class="modal-content">
+                                                                    <form asp-controller="Review" asp-action="Add" method="post">
+                                                                        <input type="hidden" name="productId" value="@item.ProductId" />
+                                                                        <div class="modal-header">
+                                                                            <h5 class="modal-title">@item.Product.Title üçün rəy</h5>
+                                                                            <button type="button" class="btn-close" data-bs-dismiss="modal"></button>
+                                                                        </div>
+                                                                        <div class="modal-body">
+                                                                            <label class="form-label fw-bold">Reytinq</label>
+                                                                            <div class="mb-3">
+                                                                                <select name="rating" class="form-select" required>
+                                                                                    <option value="">-- Seçin --</option>
+                                                                                    <option value="5">⭐⭐⭐⭐⭐ Əla</option>
+                                                                                    <option value="4">⭐⭐⭐⭐ Yaxşı</option>
+                                                                                    <option value="3">⭐⭐⭐ Orta</option>
+                                                                                    <option value="2">⭐⭐ Zəif</option>
+                                                                                    <option value="1">⭐ Pis</option>
+                                                                                </select>
+                                                                            </div>
+                                                                            <label class="form-label fw-bold">Şərh</label>
+                                                                            <textarea name="comment" class="form-control" rows="3" placeholder="Məhsul haqqında fikriniz..."></textarea>
+                                                                        </div>
+                                                                        <div class="modal-footer">
+                                                                            <button type="button" class="btn btn-secondary" data-bs-dismiss="modal">Bağla</button>
+                                                                            <button type="submit" class="btn btn-warning">Göndər</button>
+                                                                        </div>
+                                                                    </form>
+                                                                </div>
+                                                            </div>
+                                                        </div>
+                                                    }
+                                                }
+                                            </td>
+                                        </tr>
+                                    }
+                                </tbody>
+                            </table>
+                        </div>
+
+                        <div class="row g-2 small text-muted border-top pt-3">
+                            <div class="col-md-6">
+                                <i class="bi bi-geo-alt"></i> <strong>Ünvan:</strong> @order.ShippingAddress
+                            </div>
+                            <div class="col-md-6">
+                                <i class="bi bi-telephone"></i> <strong>Əlaqə:</strong> @order.ContactNumber
+                            </div>
+                        </div>
+                    </div>
+                    <div class="card-footer bg-white d-flex justify-content-end">
+                        <span class="fs-5 fw-bold text-success">Cəmi: @order.TotalAmount.ToString("0.00") AZN</span>
+                    </div>
+                </div>
+            </div>
+        }
+    </div>
+}

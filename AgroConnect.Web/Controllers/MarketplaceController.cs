@@ -144,6 +144,24 @@ namespace AgroConnect.Web.Controllers
             return RedirectToAction(nameof(Cart));
         }
 
+        // Müştərinin öz keçmiş sifarişlərinə baxdığı səhifə
+        [Authorize]
+        [HttpGet]
+        public async Task<IActionResult> MyOrders()
+        {
+            var user = await _userManager.GetUserAsync(User);
+            if (user == null) return Challenge();
+
+            var orders = await _context.Orders
+                .Include(o => o.OrderItems)
+                    .ThenInclude(oi => oi.Product)
+                .Where(o => o.ApplicationUserId == user.Id)
+                .OrderByDescending(o => o.OrderDate)
+                .ToListAsync();
+
+            return View(orders);
+        }
+
         [Authorize]
         [HttpGet]
         public IActionResult Checkout()

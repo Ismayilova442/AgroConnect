@@ -1,12 +1,39 @@
 @model IEnumerable<AgroConnect.Domain.Entities.Product>
+@using Microsoft.AspNetCore.Identity
+@using AgroConnect.Domain.Entities
+@inject UserManager<ApplicationUser> UserManager
+@inject AgroConnect.Infrastructure.Data.ApplicationDbContext DbContext
 @{
     ViewData["Title"] = "Marketplace";
+
+    var currentUserId = User.Identity != null && User.Identity.IsAuthenticated ? UserManager.GetUserId(User) : null;
+
+    var wishlistProductIds = new HashSet<int>();
+    if (currentUserId != null)
+    {
+        wishlistProductIds = DbContext.Wishlists
+            .Where(w => w.ApplicationUserId == currentUserId)
+            .Select(w => w.ProductId)
+            .ToHashSet();
+    }
+
+    var ratingLookup = DbContext.ProductReviews
+        .GroupBy(r => r.ProductId)
+        .Select(g => new { ProductId = g.Key, Avg = g.Average(r => r.Rating), Count = g.Count() })
+        .ToDictionary(x => x.ProductId, x => (x.Avg, x.Count));
 }
 
 @if (TempData["Error"] != null)
 {
     <div class="alert alert-warning alert-dismissible fade show" role="alert">
         <i class="bi bi-exclamation-triangle me-1"></i> @TempData["Error"]
+        <button type="button" class="btn-close" data-bs-dismiss="alert"></button>
+    </div>
+}
+@if (TempData["Success"] != null)
+{
+    <div class="alert alert-success alert-dismissible fade show" role="alert">
+        @TempData["Success"]
         <button type="button" class="btn-close" data-bs-dismiss="alert"></button>
     </div>
 }
@@ -44,14 +71,46 @@
         <div class="row row-cols-1 row-cols-md-3 g-4">
             @foreach (var item in Model)
             {
+                var isWishlisted = wishlistProductIds.Contains(item.Id);
+                var hasRating = ratingLookup.ContainsKey(item.Id);
+                var avgRating = hasRating ? ratingLookup[item.Id].Avg : 0;
+                var ratingCount = hasRating ? ratingLookup[item.Id].Count : 0;
+
                 <div class="col">
-                    <div class="card h-100 shadow-sm border-0 product-card">
+                    <div class="card h-100 shadow-sm border-0 product-card position-relative">
+
+                        <!-- SEVİMLİ (Ürək) düyməsi -->
+                        <form asp-controller="Wishlist" asp-action="Toggle" method="post" class="position-absolute top-0 end-0 m-2" style="z-index: 5;">
+                            <input type="hidden" name="productId" value="@item.Id" />
+                            <input type="hidden" name="returnUrl" value="@Context.Request.Path@Context.Request.QueryString" />
+                            <button type="submit" class="btn btn-sm rounded-circle @(isWishlisted ? "btn-danger" : "btn-light border")" title="Sevimlilərə əlavə et">
+                                <i class="bi @(isWishlisted ? "bi-heart-fill" : "bi-heart")"></i>
+                            </button>
+                        </form>
+
                         @if (!string.IsNullOrEmpty(item.ImageUrl))
                         {
                             <img src="@item.ImageUrl" class="card-img-top" alt="@item.Title" style="height: 200px; object-fit: cover;">
                         }
                         <div class="card-body">
                             <h5 class="card-title">@item.Title</h5>
+
+                            <!-- REYTİNQ -->
+                            <div class="mb-2">
+                                @if (hasRating)
+                                {
+                                    @for (int i = 1; i <= 5; i++)
+                                    {
+                                        <i class="bi @(i <= Math.Round(avgRating) ? "bi-star-fill text-warning" : "bi-star text-muted")"></i>
+                                    }
+                                    <span class="text-muted small ms-1">(@ratingCount)</span>
+                                }
+                                else
+                                {
+                                    <span class="text-muted small">Hələ rəy yoxdur</span>
+                                }
+                            </div>
+
                             <p class="card-text text-muted text-truncate">@item.Description</p>
 
                             <h4 class="text-success fw-bold live-price"
@@ -60,24 +119,40 @@
                                 @item.Price.ToString("0.00") AZN
                             </h4>
 
-                            <form asp-action="AddToCart" method="post" class="mt-3">
-                                <input type="hidden" name="productId" value="@item.Id" />
-                                <div class="input-group">
-                                    <input type="number"
-                                           name="quantity"
-                                           class="form-control quantity-input"
-                                           data-product-id="@item.Id"
-                                           value="1"
-                                           min="1"
-                                           max="@item.StockQuantity"
-                                           oninput="updateLivePrice(this)" />
-                                    <button class="btn btn-outline-success" type="submit"><i class="bi bi-cart-plus"></i> Səbətə At</button>
+                            @if (item.StockQuantity <= 0)
+                            {
+                                <div class="alert alert-secondary text-center fw-bold mb-0 mt-3">
+                                    <i class="bi bi-x-circle me-1"></i> Məhsul bitdi
                                 </div>
-                            </form>
+                            }
+                            else
+                            {
+                                <form asp-action="AddToCart" method="post" class="mt-3">
+                                    <input type="hidden" name="productId" value="@item.Id" />
+                                    <div class="input-group">
+                                        <input type="number"
+                                               name="quantity"
+                                               class="form-control quantity-input"
+                                               data-product-id="@item.Id"
+                                               value="1"
+                                               min="1"
+                                               max="@item.StockQuantity"
+                                               oninput="updateLivePrice(this)" />
+                                        <button class="btn btn-outline-success" type="submit"><i class="bi bi-cart-plus"></i> Səbətə At</button>
+                                    </div>
+                                </form>
+                            }
                         </div>
                         <div class="card-footer bg-white text-muted small d-flex justify-content-between">
                             <span><i class="bi bi-geo-alt"></i> @item.FarmerProfile?.District</span>
-                            <span>Stok: @item.StockQuantity</span>
+                            @if (item.StockQuantity <= 0)
+                            {
+                                <span class="text-danger fw-bold">Stok: 0</span>
+                            }
+                            else
+                            {
+                                <span>Stok: @item.StockQuantity</span>
+                            }
                         </div>
                     </div>
                 </div>

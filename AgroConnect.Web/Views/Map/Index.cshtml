@@ -2,68 +2,158 @@
 @{
     ViewData["Title"] = "Fermerlər Xəritəsi";
 }
-
 <div class="d-flex justify-content-between align-items-center mb-4">
     <h2><i class="bi bi-geo-alt-fill text-danger"></i> Fermerlər Xəritəsi</h2>
     <p class="text-muted mb-0">Azərbaycan üzrə fermerlərimizi kəşf edin</p>
 </div>
-
 <div class="card shadow border-0 mb-5">
     <div class="card-body p-0">
         <div id="map" style="height: 600px; width: 100%; border-radius: 5px;"></div>
     </div>
 </div>
-
 @section Scripts {
     <!-- Leaflet CSS -->
     <link rel="stylesheet" href="https://unpkg.com/leaflet@1.9.4/dist/leaflet.css" integrity="sha256-p4NxAoJBhIIN+hmNHrzRCf9tD/miZyoHS5obTRR9BMY=" crossorigin="" />
     <!-- Leaflet JS -->
     <script src="https://unpkg.com/leaflet@1.9.4/dist/leaflet.js" integrity="sha256-20nQCchB9co0qIjJZRGuk2/Z9VM+kNiyxNV1lvTlZBo=" crossorigin=""></script>
-
     <script>
         // Xəritəni mərkəzləşdiririk (Azərbaycan koordinatları)
         var map = L.map('map').setView([40.1431, 47.5769], 7);
-
         L.tileLayer('https://tile.openstreetmap.org/{z}/{x}/{y}.png', {
             maxZoom: 19,
             attribution: '&copy; <a href="http://www.openstreetmap.org/copyright">OpenStreetMap</a>'
         }).addTo(map);
 
-        // Custom icon for farmers
+        // Fermerlər üçün özəl ikon
         var farmerIcon = L.icon({
             iconUrl: 'https://cdn-icons-png.flaticon.com/512/1000/1000143.png',
-            iconSize: [38, 38], // size of the icon
-            iconAnchor: [19, 38], // point of the icon which will correspond to marker's location
-            popupAnchor: [0, -38] // point from which the popup should open relative to the iconAnchor
+            iconSize: [38, 38],
+            iconAnchor: [19, 38],
+            popupAnchor: [0, -38]
         });
 
-        // Backenddən gələn fermerlərin siyahısı
-        var farmers = [];
-        @foreach (var f in Model)
-        {
-            // Simulyasiya üçün random koordinatlar generasiya edək
-            // Real layihədə FermerProfile modelində Latitude və Longitude saxlanılmalıdır.
-            <text>
-                farmers.push({
-                    name: '@f.ApplicationUser?.FirstName @f.ApplicationUser?.LastName',
-                    district: '@f.District',
-                    farmType: '@f.FarmType',
-                    // Randomize slightly around Azerbaijan bounds for demonstration
-                    lat: 39.0 + Math.random() * 2.5,
-                    lng: 45.0 + Math.random() * 4.5
-                });
-            </text>
+        // Azərbaycan rayonlarının təxmini mərkəz koordinatları (statik - internetə ehtiyac yoxdur)
+        var districtCoordinates = {
+            "bakı": [40.4093, 49.8671], "baki": [40.4093, 49.8671],
+            "abşeron": [40.4667, 49.9333], "absheron": [40.4667, 49.9333],
+            "sumqayıt": [40.5926, 49.6586], "sumqayit": [40.5926, 49.6586],
+            "xızı": [40.9075, 49.0745], "xizi": [40.9075, 49.0745],
+            "gəncə": [40.6828, 46.3606], "gence": [40.6828, 46.3606], "gence": [40.6828, 46.3606],
+            "göygöl": [40.5833, 46.3167], "goygol": [40.5833, 46.3167],
+            "samux": [40.7717, 46.6081],
+            "şəmkir": [40.8306, 46.0189], "shamkir": [40.8306, 46.0189], "semkir": [40.8306, 46.0189],
+            "tovuz": [41.0483, 45.6272],
+            "qazax": [41.0972, 45.3608], "gazax": [41.0972, 45.3608],
+            "ağstafa": [41.1214, 45.4483], "agstafa": [41.1214, 45.4483],
+            "daşkəsən": [40.5228, 46.0872], "daskesen": [40.5228, 46.0872],
+            "gədəbəy": [40.5714, 45.8047], "gedebey": [40.5714, 45.8047],
+            "quba": [41.3606, 48.5128],
+            "qusar": [41.4308, 48.4325],
+            "xaçmaz": [41.4636, 48.8064], "xacmaz": [41.4636, 48.8064],
+            "şabran": [41.2242, 48.9522], "shabran": [41.2242, 48.9522],
+            "siyəzən": [41.0722, 49.1097], "siyezen": [41.0722, 49.1097],
+            "şamaxı": [40.6303, 48.6367], "shamaxi": [40.6303, 48.6367],
+            "ismayıllı": [40.7869, 48.1497], "ismayilli": [40.7869, 48.1497],
+            "ağsu": [40.5981, 48.4083], "agsu": [40.5981, 48.4083],
+            "qobustan": [40.5722, 48.9339], "gobustan": [40.5722, 48.9339],
+            "kürdəmir": [40.3439, 48.1547], "kurdemir": [40.3439, 48.1547],
+            "şirvan": [39.9309, 48.9214], "shirvan": [39.9309, 48.9214],
+            "salyan": [39.9878, 48.9714],
+            "neftçala": [39.3792, 49.2494], "neftcala": [39.3792, 49.2494],
+            "biləsuvar": [39.4547, 48.5486], "bilesuvar": [39.4547, 48.5486],
+            "saatlı": [39.9264, 48.3708], "saatli": [39.9264, 48.3708],
+            "sabirabad": [40.0064, 48.4728],
+            "hacıqabul": [40.0656, 49.0731], "hacigabul": [40.0656, 49.0731],
+            "imişli": [39.8664, 48.0664], "imisli": [39.8664, 48.0664],
+            "beyləqan": [39.7681, 47.6289], "beylegan": [39.7681, 47.6289],
+            "ağcabədi": [40.0553, 47.4522], "agcabedi": [40.0553, 47.4522],
+            "ağdam": [39.9911, 46.9297], "agdam": [39.9911, 46.9297],
+            "bərdə": [40.3775, 47.1225], "berde": [40.3775, 47.1225],
+            "tərtər": [40.3372, 47.1211], "tertar": [40.3372, 47.1211], "terter": [40.3372, 47.1211],
+            "goranboy": [40.6117, 46.7908],
+            "naftalan": [40.5083, 46.8206],
+            "şəki": [41.1919, 47.1706], "seki": [41.1919, 47.1706], "sheki": [41.1919, 47.1706],
+            "oğuz": [41.0708, 47.4589], "oguz": [41.0708, 47.4589],
+            "qəbələ": [40.9781, 47.8433], "gebele": [40.9781, 47.8433], "qabala": [40.9781, 47.8433],
+            "qax": [41.4181, 46.9247], "gax": [41.4181, 46.9247],
+            "zaqatala": [41.6308, 46.6428],
+            "balakən": [41.7256, 46.4056], "balaken": [41.7256, 46.4056],
+            "masallı": [39.0397, 48.6664], "masalli": [39.0397, 48.6664],
+            "yardımlı": [38.9139, 48.2453], "yardimli": [38.9139, 48.2453],
+            "lerik": [38.7728, 48.4142],
+            "astara": [38.4506, 48.8703],
+            "lənkəran": [38.7539, 48.8514], "lenkeran": [38.7539, 48.8514],
+            "cəlilabad": [39.1975, 48.4917], "celilabad": [39.1975, 48.4917],
+            "naxçıvan": [39.2089, 45.4122], "naxcivan": [39.2089, 45.4122], "nakhchivan": [39.2089, 45.4122],
+            "culfa": [38.9556, 45.6289],
+            "ordubad": [38.9089, 46.0206],
+            "şərur": [39.5578, 45.1275], "sherur": [39.5578, 45.1275],
+            "sədərək": [39.7194, 44.9744], "sederek": [39.7194, 44.9744],
+            "babək": [39.2075, 45.2836], "babek": [39.2075, 45.2836],
+            "şuşa": [39.7561, 46.7486], "shusha": [39.7561, 46.7486],
+            "xocalı": [39.9058, 46.7889], "xocali": [39.9058, 46.7889],
+            "xocavənd": [39.7472, 46.9231], "xocavend": [39.7472, 46.9231],
+            "laçın": [39.6367, 46.5486], "lacin": [39.6367, 46.5486],
+            "kəlbəcər": [40.1058, 46.0389], "kelbecer": [40.1058, 46.0389],
+            "qubadlı": [39.3336, 46.9153], "qubadli": [39.3336, 46.9153],
+            "zəngilan": [39.0872, 46.6461], "zengilan": [39.0872, 46.6461],
+            "cəbrayıl": [39.3956, 47.05],
+            "cebrayil": [39.3956, 47.05],
+            "füzuli": [39.6011, 47.1517], "fuzuli": [39.6011, 47.1517],
+            "mingəçevir": [40.7700, 47.0500], "mingecevir": [40.7700, 47.0500]
+        };
+
+        // Backenddən gələn fermerlərin ünvan siyahısı (Rayon/Kənd)
+        var farmers = [
+            @foreach (var f in Model)
+            {
+                    <text>
+                    {
+                        district: @Html.Raw(System.Text.Json.JsonSerializer.Serialize(f.District ?? "")),
+                        village: @Html.Raw(System.Text.Json.JsonSerializer.Serialize(f.Village ?? ""))
+                    },
+                    </text>
+            }
+        ];
+
+        function normalize(text) {
+            return (text || "").toString().trim().toLowerCase();
         }
 
-        farmers.forEach(function(f) {
-            var popupContent = "<b>" + f.name + "</b><br>" +
-                               f.district + "<br>" +
-                               "<i>" + f.farmType + "</i><br>" +
-                               "<a href='/Marketplace' class='btn btn-sm btn-success mt-2'>Məhsullarına Bax</a>";
+        var placedCount = 0;
+        var skippedDistricts = [];
 
-            L.marker([f.lat, f.lng], {icon: farmerIcon})
-             .addTo(map)
-             .bindPopup(popupContent);
+        farmers.forEach(function (farmer) {
+            var key = normalize(farmer.district);
+            var coords = districtCoordinates[key];
+
+            if (!coords) {
+                skippedDistricts.push(farmer.district);
+                return;
+            }
+
+            // Eyni rayonda bir neçə fermer varsa, marker-lər üst-üstə düşməsin deyə kiçik təsadüfi sürüşmə
+            var jitterLat = (Math.random() - 0.5) * 0.06;
+            var jitterLng = (Math.random() - 0.5) * 0.06;
+            var lat = coords[0] + jitterLat;
+            var lng = coords[1] + jitterLng;
+
+            var addressText = [farmer.village, farmer.district]
+                .filter(function (part) { return part && part.trim().length > 0; })
+                .join(", ");
+
+            var popupContent = "<b><i class='bi bi-geo-alt'></i> Ünvan:</b><br>" + addressText;
+
+            L.marker([lat, lng], { icon: farmerIcon })
+                .addTo(map)
+                .bindPopup(popupContent);
+
+            placedCount++;
         });
+
+        if (skippedDistricts.length > 0) {
+            console.warn("Bu rayonlar siyahıda tapılmadı, marker qoyulmadı:", skippedDistricts);
+        }
+        console.log("Xəritəyə yerləşdirilən fermer sayı:", placedCount, "/ Cəmi:", farmers.length);
     </script>
 }
